@@ -1,0 +1,15 @@
+{
+  "_comment": "四叉树按点云密度自适应切片 — base 40m, 密度 >2000 点分裂, 最小 20m, 重叠 6m (创造跨tile重复检测)",
+  "method": "quadtree_pointcloud",
+  "cover": {
+    "mode": "adaptive_grid",
+    "base_tile_size_m": 40,
+    "min_tile_size_m": 20,
+    "max_tile_size_m": 40.0,
+    "min_density_points": 2000,
+    "tile_overlap_m": 6.0,
+    "skip_empty_tiles": true,
+    "black_pixel_threshold": 5,
+    "min_content_ratio": 0.35
+  }
+}

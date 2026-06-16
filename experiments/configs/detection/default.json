@@ -1,0 +1,11 @@
+{
+  "_comment": "YOLO推理参数 — 检测阶段固定, 确保控制变量",
+  "inference": {
+    "imgsz": 1024,
+    "conf": 0.4,
+    "max_det": 1000,
+    "retina_masks": true,
+    "device": 0,
+    "min_stone_diameter_m": 1.2
+  }
+}

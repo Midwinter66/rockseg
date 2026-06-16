@@ -1,0 +1,11 @@
+{
+  "_comment": "SAHI 高重叠对照 — 1024px, 35% 重叠 (≈3.5m, 充分覆盖重复区), 有效像素 >25% 保留",
+  "method": "sahi_dense",
+  "patching": {
+    "patch_size": 1024,
+    "overlap": 0.25,
+    "black_pixel_threshold": 5,
+    "min_content_ratio": 0.25,
+    "include_edge_patches": true
+  }
+}

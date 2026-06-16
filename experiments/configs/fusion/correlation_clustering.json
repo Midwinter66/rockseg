@@ -1,0 +1,20 @@
+{
+  "_comment": "相关性聚类 — sigma=0.8 缓衰减, 正边阈值0.55, 加入IoU加权(0.3), 同tile加成1.5x",
+  "method": "correlation_clustering",
+  "correlation": {
+    "max_distance_m": 3.0,
+    "_comment_dist": "只考虑 3m 以内的检测对，超出此距离的检测几乎不可能是同一石块",
+    "distance_sigma": 0.80,
+    "_comment_sigma": "sigma=0.80: 距离0.5m权重0.82, 1.0m权重0.46, 1.5m权重0.17 — 缓衰减",
+    "positive_weight_threshold": 0.55,
+    "_comment_positive": "边权>0.55视为正边。同tile+0.5m+0.5IoU → 0.82*1.15*1.5=1.41>0.55✓; 跨tile+0.8m+0.3IoU → 0.61*1.09*1.0=0.66>0.55✓",
+    "use_iou": true,
+    "iou_weight": 0.3,
+    "_comment_iou": "IoU 对权重的加成: (1 + iou_w * iou), IoU=0.5 → 1.15x",
+    "use_tile_affinity": true,
+    "same_tile_boost": 1.50,
+    "_comment_boost": "同tile 1.5x 加成, 同一patch内的重复检测更倾向合并",
+    "require_bbox_intersect": true,
+    "_comment_require": "BBox必须相交才考虑合并, 过滤明显无关的检测对"
+  }
+}

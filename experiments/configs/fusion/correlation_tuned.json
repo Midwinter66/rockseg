@@ -1,0 +1,14 @@
+{
+  "_comment": "Web tuner - sahi_baseline",
+  "method": "correlation_clustering",
+  "correlation": {
+    "max_distance_m": 4.5,
+    "distance_sigma": 0.5,
+    "positive_weight_threshold": 0.3,
+    "use_iou": true,
+    "iou_weight": 0.3,
+    "use_tile_affinity": true,
+    "same_tile_boost": 1.2,
+    "require_bbox_intersect": true
+  }
+}

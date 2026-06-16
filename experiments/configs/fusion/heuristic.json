@@ -1,0 +1,12 @@
+{
+  "_comment": "启发式双层融合参数 (当前v2默认)",
+  "method": "heuristic_two_layer",
+  "association": {
+    "same_tile_distance_m": 0.5,
+    "same_tile_iou_threshold": 0.5,
+    "cross_tile_distance_m": 0.8,
+    "cross_tile_iou_threshold": 0.3,
+    "boundary_margin_m": 0.3,
+    "boundary_bbox_padding_m": 0.25
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "_comment": "SAHI 固定滑窗基线 — 1024px, 10% 重叠 (≈1m, 最小覆盖), 有效像素 >25% 保留",
+  "method": "sahi_baseline",
+  "patching": {
+    "patch_size": 1024,
+    "overlap": 0.1,
+    "black_pixel_threshold": 5,
+    "min_content_ratio": 0.25,
+    "include_edge_patches": true
+  }
+}
