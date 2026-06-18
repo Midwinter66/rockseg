@@ -9,8 +9,9 @@
   cd D:\github_project\image_segment\DOM_Space_message_val
 
   # 查看单个融合结果
-  python experiments/fusion/visualize_fusion.py --source sahi_baseline --method heuristic
-  python experiments/fusion/visualize_fusion.py --source sahi_baseline --method correlation_clustering
+  python experiments/fusion/visualize_fusion.py --source sahi --method heuristic
+  python experiments/fusion/visualize_fusion.py --source sahi --method correlation_clustering
+  python experiments/fusion/visualize_fusion.py --source quadtree_dom --method heuristic
 
   # 对比两种方法 (并排图 + 差异标注)
   python experiments/fusion/visualize_fusion.py --source sahi_baseline --compare
@@ -36,7 +37,7 @@ DOM_PATH = PROJECT_ROOT / "data" / "dom3" / "DOM.tif"
 SELF_DIR = Path(__file__).resolve().parent
 FUSION_OUTPUTS = SELF_DIR / "outputs"
 
-SOURCES = ["sahi_baseline", "sahi_dense", "quadtree_pointcloud", "quadtree_dom"]
+SOURCES = ["sahi", "quadtree_dom"]
 
 
 def _parse_tfw(tfw_path: str | Path) -> tuple:

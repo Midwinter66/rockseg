@@ -1,0 +1,11 @@
+{
+  "_comment": "SAHI 固定滑窗 — 1024px, overlap 通过配置控制, 有效像素 >25% 保留",
+  "method": "sahi",
+  "patching": {
+    "patch_size": 1024,
+    "overlap": 0.3,
+    "black_pixel_threshold": 5,
+    "min_content_ratio": 0.1,
+    "include_edge_patches": true
+  }
+}

@@ -1,9 +1,7 @@
 {
-  "_comment": "启发式双层融合参数 (当前v2默认)",
-  "method": "heuristic_two_layer",
+  "_comment": "启发式融合 — 仅跨切片合并 (YOLO 自身 NMS 已处理同一切片内的重复)",
+  "method": "heuristic_cross_tile",
   "association": {
-    "same_tile_distance_m": 0.5,
-    "same_tile_iou_threshold": 0.5,
     "cross_tile_distance_m": 0.8,
     "cross_tile_iou_threshold": 0.3,
     "boundary_margin_m": 0.3,

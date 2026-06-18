@@ -1,16 +1,14 @@
 {
-  "_comment": "四叉树按DOM纹理自适应切片 — base 40m, edge_density >0.15 分裂, 最小 20m, 重叠 6m (创造跨tile重复检测), Canny 30/90",
+  "_comment": "四叉树按DOM纹理自适应切片 — base 20m, edge_density>0.15分裂, 最小10m, 重叠3m, Canny 30/90",
   "method": "quadtree_dom",
   "cover": {
-    "mode": "adaptive_grid",
     "base_tile_size_m": 20,
     "min_tile_size_m": 10,
     "max_tile_size_m": 20,
     "min_edge_density": 0.15,
-    "tile_overlap_m": 4.0,
-    "skip_empty_tiles": true,
+    "tile_overlap_m": 3.0,
     "black_pixel_threshold": 5,
-    "min_content_ratio": 0.35,
+    "min_content_ratio": 0.15,
     "canny_low": 30,
     "canny_high": 90
   }

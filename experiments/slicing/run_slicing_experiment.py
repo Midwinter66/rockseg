@@ -2,19 +2,15 @@
 """
 统一切片实验运行器
 
-支持三种方法:
-  - sahi_baseline  : SAHI 固定滑窗 (v1 默认参数)
-  - sahi_dense     : SAHI 高重叠滑窗
-  - quadtree_pointcloud : 四叉树按点云密度 (v2 默认)
-  - quadtree_dom   : 四叉树按 DOM 纹理边缘密度
+支持两种方法:
+  - sahi         : SAHI 固定滑窗 (由配置文件控制 overlap)
+  - quadtree_dom : 四叉树按 DOM 纹理边缘密度
 
 用法:
   cd D:\github_project\image_segment\DOM_Space_message_val
 
-  # 1) 逐个跑 (输出到对应子目录)
-  python experiments/slicing/run_slicing_experiment.py --method sahi_baseline
-  python experiments/slicing/run_slicing_experiment.py --method sahi_dense
-  python experiments/slicing/run_slicing_experiment.py --method quadtree_pointcloud
+  # 1) 逐个跑
+  python experiments/slicing/run_slicing_experiment.py --method sahi
   python experiments/slicing/run_slicing_experiment.py --method quadtree_dom
 
   # 2) 一步跑全部
@@ -31,7 +27,6 @@ from pathlib import Path
 # 项目根
 PROJECT_ROOT = Path(__file__).resolve().parents[2]  # experiments/slicing/ -> root
 sys.path.insert(0, str(PROJECT_ROOT))
-sys.path.insert(0, str(PROJECT_ROOT / "v2" / "src"))
 
 import cv2, numpy as np
 from PIL import Image
@@ -48,11 +43,10 @@ from experiments.utils.visualization import (
 # ── 常量: 数据路径 ─────────────────────────────────────────────────
 DOM_PATH = PROJECT_ROOT / "data" / "dom3" / "DOM.tif"
 DOM_WORLD_PATH = PROJECT_ROOT / "data" / "dom3" / "DOM.tfw"
-POINTCLOUD_DIR = PROJECT_ROOT / "data" / "pointcloud2"
 SELF_DIR = Path(__file__).resolve().parent  # experiments/slicing/
 
 # 所有已注册的切片方法
-ALL_METHODS = ["sahi_baseline", "sahi_dense", "quadtree_pointcloud", "quadtree_dom"]
+ALL_METHODS = ["sahi", "quadtree_dom"]
 
 
 # ══════════════════════════════════════════════════════════════════════
@@ -121,13 +115,15 @@ class DOMTextureQuadTree:
                  canny_low: int = 50,
                  canny_high: int = 150,
                  black_threshold: int = 5,
-                 min_content_ratio: float = 0.0) -> list[dict]:
+                 min_content_ratio: float = 0.0,
+                 tile_overlap_m: float = 0.0) -> list[dict]:
         """对 DOM 影像做 Canny 检测, 按边缘密度四分
 
         dom_image: BGR uint8 [H, W, 3] — 已经加载的 DOM 图像
         edge_density_threshold: 边缘密度阈值 (边缘像素 / 总像素)
         black_threshold: 灰度低于此值视为黑色无效区域
         min_content_ratio: 有效内容占比低于此值的 tile 标记为 skipped
+        tile_overlap_m: 相邻 tile 之间的重叠宽度（半边扩展，0=无重叠）
         """
         xmin, ymin, xmax, ymax = self.bounds
         h_img, w_img = dom_image.shape[:2]
@@ -157,6 +153,16 @@ class DOMTextureQuadTree:
                 queue.append({"tile_id": f"tile_{ix}_{iy}", "bounds_m": [tx0, ty0, tx1, ty1]})
 
         final_tiles: list[dict] = []
+        half_overlap = tile_overlap_m / 2.0
+
+        def _expand_bounds(b: list[float]) -> list[float]:
+            """将 tile 边界向外扩展 half_overlap，截断到 DOM 边界"""
+            return [
+                max(xmin, b[0] - half_overlap),
+                max(ymin, b[1] - half_overlap),
+                min(xmax, b[2] + half_overlap),
+                min(ymax, b[3] + half_overlap),
+            ]
 
         while queue:
             tile = queue.pop(0)
@@ -186,6 +192,7 @@ class DOMTextureQuadTree:
             if content_ratio < min_content_ratio:
                 tile["skipped"] = True
                 tile["skip_reason"] = "black"
+                tile["bounds_m"] = _expand_bounds(tile["bounds_m"])
                 final_tiles.append(tile)
                 continue
 
@@ -193,6 +200,7 @@ class DOMTextureQuadTree:
             if edge_count == 0:
                 tile["skipped"] = True
                 tile["skip_reason"] = "no_edges"
+                tile["bounds_m"] = _expand_bounds(tile["bounds_m"])
                 final_tiles.append(tile)
                 continue
 
@@ -209,6 +217,7 @@ class DOMTextureQuadTree:
             else:
                 tile["skipped"] = False
                 tile["skip_reason"] = ""
+                tile["bounds_m"] = _expand_bounds(tile["bounds_m"])
                 final_tiles.append(tile)
 
         return final_tiles
@@ -243,6 +252,12 @@ def _run_sahi(config: dict, out_dir: Path) -> dict:
             return [0]
         pos = list(range(0, limit - patch_sz + 1, stride))
         if include_edge and pos[-1] != limit - patch_sz:
+            last = pos[-1]
+            gap = (limit - patch_sz) - last
+            if gap > stride:
+                while last + stride < limit - patch_sz:
+                    last += stride
+                    pos.append(last)
             pos.append(limit - patch_sz)
         return sorted(set(pos))
 
@@ -293,64 +308,6 @@ def _run_sahi(config: dict, out_dir: Path) -> dict:
     return stats
 
 
-def _run_quadtree_pointcloud(config: dict, out_dir: Path) -> dict:
-    """运行四叉树 (点云密度), 复用 v2 的 QuadTreeCover"""
-    from nextgen.models import Tile  # noqa: E402
-    from nextgen.quadtree import QuadTreeCover  # noqa: E402
-    import open3d as o3d  # noqa: E402
-
-    cc = config["cover"]
-    dom_info = _get_dom_info()
-
-    # 加载点云
-    t0 = time.perf_counter()
-    all_pts = []
-    for ply_file in sorted(POINTCLOUD_DIR.glob("*.ply")):
-        pcd = o3d.io.read_point_cloud(str(ply_file))
-        pts = np.asarray(pcd.points)
-        if len(pts) > 0:
-            all_pts.append(pts)
-    if not all_pts:
-        raise FileNotFoundError("No point cloud files found")
-    pc = np.vstack(all_pts)
-
-    qt = QuadTreeCover(
-        dom_info["dom_bounds_world"],
-        float(cc["base_tile_size_m"]),
-        float(cc["min_tile_size_m"]),
-        float(cc["max_tile_size_m"]),
-    )
-    tiles = qt.generate(pc, float(cc["min_density_points"]))
-    elapsed = time.perf_counter() - t0
-
-    tile_dicts = []
-    for t in tiles:
-        tile_dicts.append({
-            "tile_id": t.tile_id,
-            "bounds_m": t.bounds_m,
-            "source_points": int(t.source_points),
-            "density_score": round(float(t.density_score), 4),
-            "skipped": bool(t.source_points == 0 and cc.get("skip_empty_tiles", True)),
-        })
-
-    stats = compute_quadtree_stats(
-        config["method"], cc, tile_dicts, dom_info["dom_bounds_world"], elapsed
-    )
-
-    stats_path = out_dir / "tile_stats.json"
-    stats_path.write_text(json.dumps(stats, indent=2, ensure_ascii=False), encoding="utf-8")
-
-    overlay_path = out_dir / "tile_overlay.png"
-    draw_quadtree_overlay(
-        DOM_PATH, tile_dicts, dom_info["dom_bounds_world"],
-        img_size=(dom_info["width"], dom_info["height"]),
-        output_path=overlay_path, max_side=8000, line_thickness=2,
-    )
-    kept = len([t for t in tile_dicts if not t["skipped"]])
-    print(f"  [Quadtree-PC] 有效tile: {kept}/{len(tile_dicts)}, "
-          f"耗时: {elapsed:.2f}s, 图已保存: {overlay_path}")
-    return stats
-
 
 def _run_quadtree_dom(config: dict, out_dir: Path) -> dict:
     """运行四叉树 (DOM 纹理边缘密度)"""
@@ -377,6 +334,7 @@ def _run_quadtree_dom(config: dict, out_dir: Path) -> dict:
         int(cc.get("canny_high", 150)),
         black_threshold=int(cc.get("black_pixel_threshold", 5)),
         min_content_ratio=float(cc.get("min_content_ratio", 0.0)),
+        tile_overlap_m=float(cc.get("tile_overlap_m", 0.0)),
     )
     elapsed = time.perf_counter() - t0
 
@@ -404,16 +362,14 @@ def _run_quadtree_dom(config: dict, out_dir: Path) -> dict:
 # ══════════════════════════════════════════════════════════════════════
 
 RUNNERS = {
-    "sahi_baseline":      _run_sahi,
-    "sahi_dense":         _run_sahi,
-    "quadtree_pointcloud": _run_quadtree_pointcloud,
-    "quadtree_dom":        _run_quadtree_dom,
+    "sahi":         _run_sahi,
+    "quadtree_dom": _run_quadtree_dom,
 }
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Run slicing method comparison experiment")
-    parser.add_argument("--method", choices=["all"] + ALL_METHODS, default="all",
+    parser.add_argument("--method", choices=["all"] + ALL_METHODS, default="sahi",
                         help="Slicing method to run, or 'all' to run all")
     args = parser.parse_args()
 
@@ -458,8 +414,7 @@ def main() -> None:
 
     if len(methods) > 1:
         print(f"\nRun:  python experiments/slicing/visualize_tiles.py")
-    else:
-        print(f"\nRun other methods and then:  python experiments/slicing/visualize_tiles.py")
+    print(f"\nRun other methods and then:  python experiments/slicing/visualize_tiles.py")
 
 
 if __name__ == "__main__":

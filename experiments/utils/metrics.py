@@ -36,9 +36,19 @@ def compute_sahi_stats(
     skipped = [p for p in all_patches if p.get("status") != "kept"]
 
     dom_area = dom_width * dom_height
-    # SAHI patch 大小固定
+
+    # 用 kept patches 的像素包围盒计算实际唯一覆盖面积（考虑重叠）
+    if kept:
+        min_x = min(p["pixel_origin"][0] for p in kept)
+        min_y = min(p["pixel_origin"][1] for p in kept)
+        max_x = max(p["pixel_origin"][0] + p["pixel_size"] for p in kept)
+        max_y = max(p["pixel_origin"][1] + p["pixel_size"] for p in kept)
+        unique_area = (max_x - min_x) * (max_y - min_y)
+    else:
+        unique_area = 0
+
+    # SAHI patch 大小统计
     patch_sizes = [p.get("pixel_size", 0) for p in all_patches]
-    covered_area = sum(sz * sz for sz in patch_sizes)  # 不考虑重叠的覆盖
 
     return {
         "method": method_name,
@@ -47,8 +57,8 @@ def compute_sahi_stats(
         "total_patches": len(all_patches),
         "kept_patches": len(kept),
         "skipped_patches": len(skipped),
-        "coverage_ratio": round(covered_area / dom_area, 4) if dom_area else 0,
-        "skipped_area_ratio": round(
+        "coverage_ratio": round(min(1.0, unique_area / dom_area), 4) if dom_area else 0,
+        "skipped_ratio": round(
             sum(p.get("content_ratio", 0) for p in skipped) / max(len(skipped), 1), 4
         ),
         "elapsed_seconds": round(elapsed, 3),
@@ -80,12 +90,22 @@ def compute_quadtree_stats(
     dy = dom_bounds_world[3] - dom_bounds_world[1]
     dom_area_m2 = dx * dy
 
-    # tile 面积
+    # tile 面积（用于分布统计，保留原始值）
     tile_areas_m2 = []
     for t in tiles:
         b = t.get("bounds_m", [0, 0, 0, 0])
         area = (b[2] - b[0]) * (b[3] - b[1])
         tile_areas_m2.append(area)
+
+    # 唯一覆盖面积：kept tiles 的包围盒（避免 tile_overlap 导致面积重复计算）
+    if kept:
+        min_x = min(t["bounds_m"][0] for t in kept)
+        min_y = min(t["bounds_m"][1] for t in kept)
+        max_x = max(t["bounds_m"][2] for t in kept)
+        max_y = max(t["bounds_m"][3] for t in kept)
+        unique_area_m2 = (max_x - min_x) * (max_y - min_y)
+    else:
+        unique_area_m2 = 0
 
     return {
         "method": method_name,
@@ -95,7 +115,8 @@ def compute_quadtree_stats(
         "total_tiles": len(tiles),
         "kept_tiles": len(kept),
         "skipped_tiles": len(skipped),
-        "coverage_ratio": round(sum(tile_areas_m2) / dom_area_m2, 4) if dom_area_m2 else 0,
+        "coverage_ratio": round(min(1.0, unique_area_m2 / dom_area_m2), 4) if dom_area_m2 else 0,
+        "unique_coverage_m2": round(unique_area_m2, 2),
         "elapsed_seconds": round(elapsed, 3),
         "tile_size_distribution_m2": {
             "min": round(min(tile_areas_m2), 2) if tile_areas_m2 else 0,
