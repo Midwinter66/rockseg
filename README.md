@@ -1,371 +1,233 @@
-# RockSeg — 航拍岩块检测与点云可视化
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.10+-blue" alt="Python">
+  <img src="https://img.shields.io/badge/YOLOv8--seg-ultralytics-green" alt="YOLO">
+  <img src="https://img.shields.io/badge/Open3D-0.18+-orange" alt="Open3D">
+  <img src="https://img.shields.io/badge/status-active-brightgreen" alt="Status">
+</p>
 
-从 **OSGB 模型**转换而来的正射影像（DOM）和点云中，自动检测、分割岩块，并在 3D 点云中可视化。
+<h1 align="center">🪨 RockSeg</h1>
+<p align="center"><b>OSGB 航拍岩块检测 · 分割 · 点云可视化</b></p>
+<p align="center">从 OSGB 模型导出的正射影像（DOM）中自动检测岩块，并映射到点云中高亮显示。</p>
 
 ---
 
-## 完整数据流
+## 整体流程
 
 ```
-┌══════════════════════════════════════════════════════════════════════┐
-│                       原始数据 (不纳入 Git)                          │
-│                                                                     │
-│  data/dom3/DOM.tif       ←── OSGB 模型转换的正射影像 (GeoTIFF)     │
-│  data/dom3/DOM.tfw       ←── 地理配准文件 (像素→世界坐标)           │
-│  data/pointcloud3/Data/BlockB.laz  ←── OSGB 模型转换的点云 (LAZ)   │
-│  data/pointcloud3/Data/BlockY.laz  ←── (与 BlockB 拼接为完整区域)  │
-└──────────────────────────────────────────────────────────────────────┘
-         │
-         │ 读取 DOM.tif + DOM.tfw
-         ▼
-┌──────────────────────────────────────────────────────────────────────┐
-│  ① SLICING — 切片实验                                               │
-│  (experiments/slicing/run_slicing_experiment.py)                    │
-│                                                                     │
-│  输入: DOM.tif (整张正射影像，可能 7000×23000 px)                   │
-│  配置: experiments/configs/slicing/sahi.json 或 quadtree_dom.json   │
-│                                                                     │
-│  两种方法:                                                          │
-│  ┌─ SAHI: 固定 1024×1024 滑窗扫描整个 DOM                          │
-│  │   overlap=0.1  → 相邻 tile 重叠 10% (≈1m)                      │
-│  │   跳过 黑色无数据区 (>25% 像素为黑 → 跳过)                      │
-│  │                                                                  │
-│  └─ Quadtree-DOM: 按 Canny 边缘密度自适应切分                       │
-│      边缘密度 > 0.15 且 tile > 20m → 四分                          │
-│      平坦区域保持大 tile (~23m)，岩石区切到最小 (~10m)              │
-│      tile_overlap_m=3.0 → 相邻 tile 扩展 1.5m 避免边界被切断      │
-│                                                                     │
-│  输出:                                                              │
-│    outputs/sahi/tile_stats.json                                     │
-│    ├── patches[]: 每个 tile 的信息                                  │
-│    │   ├── pixel_origin: [x, y]  ←─ tile 左上角在 DOM 中的像素坐标 │
-│    │   ├── pixel_size: 1024       ←─ tile 尺寸 (px)                │
-│    │   ├── world_bounds: [xmin,ymin,xmax,ymax]  ←─ 世界坐标范围   │
-│    │   ├── content_ratio: 0.85    ←─ 有效像素占比                   │
-│    │   └── status: "kept"/"skipped_black"                          │
-│    ├── total_patches / kept_patches                                 │
-│    └── coverage_ratio  ←─ 有效 tile 覆盖面积 / DOM 总面积           │
-│                                                                     │
-│    outputs/quadtree_dom/tile_stats.json (同上结构, 用 tiles[] 字段) │
-└──────────────────────────────────────────────────────────────────────┘
-         │
-         │ tile_stats.json 传给检测阶段，按 kept tiles 逐个推理
-         ▼
-┌──────────────────────────────────────────────────────────────────────┐
-│  ② DETECTION — YOLO 检测实验                                        │
-│  (experiments/detection/run_detection_experiment.py)                │
-│                                                                     │
-│  输入:                                                              │
-│    ├─ tile_stats.json (从哪里读 tile 的 pixel_origin 和尺寸)        │
-│    ├─ models/best.pt (YOLOv8-seg 模型)                              │
-│    └─ DOM.tif (按 tile 坐标裁切原图)                                │
-│                                                                     │
-│  配置: experiments/configs/detection/default.json                   │
-│    ├── imgsz: 1024          ←─ YOLO 输入尺寸                        │
-│    ├── conf: 0.35           ←─ 置信度阈值 (低于此值跳过)            │
-│    ├── max_det: 1000        ←─ 每张图最多检测数                     │
-│    └── min_stone_diameter_m: 1.0  ←─ 最小石头直径 (小于此值跳过)   │
-│                                                                     │
-│  处理流程:                                                          │
-│    1. 读取 tile_stats.json，只处理 kept 状态的 tile                │
-│    2. 根据 pixel_origin 从 DOM 裁出 tile 图像                      │
-│    3. YOLO 推理 → 得到 masks (每个 mask 是一个二值图像)            │
-│    4. 对每个 mask:                                                  │
-│       a. 计算面积 → 等效直径                                       │
-│       b. 小于 min_stone_diameter_m → 跳过                          │
-│       c. 用 cv2.moments 算质心 → 世界坐标                          │
-│       d. RLE 压缩 mask (COCO 格式, 无损)                           │
-│    5. 输出到 detections.json                                        │
-│                                                                     │
-│  输出: outputs/sahi/detections.json                                 │
-│    [  ←─ 检测列表 (每张 tile 可能有 0~多个)                        │
-│      {                                                              │
-│        "score": 0.85,              ←─ YOLO 置信度                   │
-│        "area_m2": 2.34,            ←─ mask 面积 (m²)               │
-│        "equivalent_diameter_m": 1.73,  ←─ 等效圆直径               │
-│        "centroid_world": [x, y],   ←─ 质心世界坐标 (供 fusion 用)  │
-│        "bbox_world": [xmin,ymin,xmax,ymax],  ←─ 检测框世界坐标     │
-│        "pixel_origin": [px, py],   ←─ tile 在 DOM 的起点 (mask→世界│
-│        "rle_mask": {"size":[h,w], "counts":[...]},  ←─ RLE mask   │
-│        "source_patch_id": "patch_000000"  ←─ 来源 tile ID          │
-│      },                                                             │
-│      ...                                                             │
-│    ]                                                                │
-│                                                                     │
-│  同时输出: outputs/sahi/detection_stats.json                        │
-│    ├── detection_count: 2366  ←─ 检测总数                           │
-│    ├── processed_tiles / total_tiles                                │
-│    ├── area_m2: {min, max, mean}                                    │
-│    └── diameter_m: {min, max, mean}                                 │
-└──────────────────────────────────────────────────────────────────────┘
-         │
-         │ detections.json 传给融合阶段，需要里面的 centroid_world、
-         │ bbox_world、rle_mask、source_patch_id 字段
-         ▼
-┌──────────────────────────────────────────────────────────────────────┐
-│  ③ FUSION — 融合实验                                                │
-│  (experiments/fusion/run_fusion_experiment.py)                      │
-│                                                                     │
-│  输入: outputs/sahi/detections.json (来自检测阶段)                  │
-│                                                                     │
-│  解决的问题:                                                        │
-│    同一个石头可能被多个 tile 检测到 (因为 tile 之间有 overlap)      │
-│    → 需要把重复检测合并为一块石头                                    │
-│                                                                     │
-│  配置: experiments/configs/fusion/                                  │
-│    ├── heuristic.json                                               │
-│    │   ├── cross_tile_distance_m: 0.8  ←─ 质心距离阈值             │
-│    │   └── cross_tile_iou_threshold: 0.3  ←─ bbox IoU 阈值         │
-│    │   逻辑: 同 tile 跳过 / 距离>0.8m跳过 / IoU<0.3跳过 → 合并    │
-│    │                                                                 │
-│    └── correlation_clustering.json                                  │
-│        ├── distance_sigma: 0.70     ←─ 高斯权重衰减系数            │
-│        ├── positive_weight_threshold: 0.45  ←─ 正边阈值             │
-│        ├── iou_weight: 0.3          ←─ IoU 加成系数                │
-│        ├── same_tile_boost: 1.20   ←─ 同 tile 亲和加成              │
-│        └── max_distance_m: 3.5     ←─ 只计算 3.5m 内的配对          │
-│        逻辑: 亲和度 = exp(-d²/2σ²) × (1+0.3×IoU) × tile加成         │
-│              亲和度 ≥ 0.45 → 同一块石头                              │
-│                                                                     │
-│  输出: outputs/sahi/correlation_clustering/fusion_stats.json        │
-│    {                                                                 │
-│      "source": "sahi",           ←─ 来源切片方法                    │
-│      "method": "correlation_clustering",  ←─ 融合方法               │
-│      "input_detections": 458,    ←─ 输入检测数                      │
-│      "output_stones": 274,       ←─ 融合后石头数                    │
-│      "merge_ratio": 0.4017,      ←─ 合并比例 (1 - 石头/检测)        │
-│      "stones": [                  ←─ 石头列表 (给 visualize_pc)     │
-│        {                                                             │
-│          "stone_id": "stone_000000",                                 │
-│          "source_detection_count": 2,  ←─ 由几个检测合并而成        │
-│          "score_mean": 0.8588,    ←─ 平均置信度                     │
-│          "bbox_world": [xmin,ymin,xmax,ymax],  ←─ 石头包围盒        │
-│          "detection_indices": [3, 7]  ←─ 在 detections.json 中的索引│
-│        },                                                             │
-│        ...                                                           │
-│      ]                                                               │
-│    }                                                                 │
-└──────────────────────────────────────────────────────────────────────┘
-         │
-         │ fusion_stats.json + detections.json 传给可视化
-         │ visualize_pc 用 detection_indices 回溯每个石头的 RLE mask，
-         │ 用 mask 多边形精确裁剪点云
-         ▼
-┌──────────────────────────────────────────────────────────────────────┐
-│  ④ VISUALIZE PC — 点云可视化                                        │
-│  (experiments/visualize_pc/run_visualize.py)                        │
-│                                                                     │
-│  输入:                                                              │
-│    ├─ fusion_stats.json     ←─ 石头的 bbox + detection_indices      │
-│    ├─ detections.json       ←─ 每个检测的 RLE mask + pixel_origin   │
-│    └─ BlockB.laz + BlockY.laz  ←─ OSGB 点云 (LAZ 格式)            │
-│                                                                     │
-│  配置: 代码中的常量                                                  │
-│    LAZ_OFFSET_X = 623499.1061  ←─ LAZ 局部坐标 → DOM 坐标的偏移    │
-│    LAZ_OFFSET_Y = 4678587.301  ←─ (通过 _compute_offset.py 算出)   │
-│                                                                     │
-│  处理流程:                                                          │
-│    1. 加载 LAZ 点云 (原始局部坐标, 约 1.87 亿点)                   │
-│    2. 降采样到 ~300 万点 (每 N 点取 1)                              │
-│    3. 遍历每个石头:                                                  │
-│       a. 读取 detection_indices → 找到关联的检测                    │
-│       b. 解码 RLE → 二值 mask                                       │
-│       c. 提取 mask 轮廓 → 像素坐标 + pixel_origin → 世界坐标       │
-│       d. 减去 LAZ_OFFSET → 得到 LAZ 局部坐标多边形                  │
-│       e. 对降采样后的点做 point-in-polygon 过滤                     │
-│       f. 匹配的点着色为循环颜色 (12 色循环)                         │
-│    4. 未匹配任何石头的点 → 灰色                                     │
-│    5. Open3D 显示全景点云                                            │
-│                                                                     │
-│  输出: Open3D 窗口:                                                  │
-│    ├─ 非石头区域: 灰色 (0.6, 0.6, 0.6)                             │
-│    ├─ 石头区域: 12 色循环 (红绿蓝橙紫青粉...)                       │
-│    └─ 操作: 左键旋转 / 滚轮缩放 / 右键平移                          │
-└──────────────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                             原始 OSGB 模型                                     │
+│   ┌─────────────────┐                     ┌──────────────────────────────┐   │
+│   │  正射影像 DOM    │                     │  点云 (LAZ 格式)              │   │
+│   │  (data/dom3/)    │                     │  (data/pointcloud3/)         │   │
+│   └────────┬────────┘                     └──────────┬───────────────────┘   │
+└──────────────────────────────────────────────────────────────────────────────┘
+             │                                                  │
+             ▼                                                  │
+┌─────────────────────────────┐                                │
+│  ① 切片 (Slicing)           │                                │
+│  SAHI 滑窗 / Quadtree 自适应  │                                │
+│  ↓                          │                                │
+│  tile 图像 + 元数据           │                                │
+└──────────┬──────────────────┘                                │
+           ▼                                                   │
+┌─────────────────────────────┐                                │
+│  ② 检测 (Detection)         │                                │
+│  YOLOv8-seg 推理             │                                │
+│  ↓                          │                                │
+│  检测列表 (含 RLE mask)       │                                │
+└──────────┬──────────────────┘                                │
+           ▼                                                   │
+┌─────────────────────────────┐                                │
+│  ③ 融合 (Fusion)            │                                │
+│  启发式合并 / 相关聚类         │                                │
+│  ↓                          │                                │
+│  融合结果 (石头分组)           │                                │
+└──────────┬──────────────────┘                                │
+           ▼                                                   ▼
+┌────────────────────────────────────────────────────────────────┐
+│  ④ 可视化 (Visualize PC)                                       │
+│  Open3D 点云高亮显示                                             │
+│  ↓                                                             │
+│  全景点云: 石头彩色 / 非石头灰色                                   │
+└────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 快速开始
+## 各阶段详解
 
-### 1. 环境安装
+### 数据准备
 
-```bash
-# pip
-pip install -r requirements.txt
+| 文件 | 来源 | 格式 | 说明 |
+|------|------|------|------|
+| `data/dom3/DOM.tif` | OSGB 模型导出 | GeoTIFF | 正射影像，分辨率 0.01m/px |
+| `data/dom3/DOM.tfw` | 同上 | 六参数配准 | 像素坐标 ↔ 世界坐标的转换矩阵 |
+| `data/pointcloud3/Data/BlockB.laz` | OSGB 模型导出 | LAZ (压缩点云) | 区域 B 的点云 |
+| `data/pointcloud3/Data/BlockY.laz` | OSGB 模型导出 | LAZ (压缩点云) | 区域 Y 的点云，与 B 拼接覆盖完整矿区 |
 
-# 或 conda (推荐)
-conda env create -f environment.yml
-conda activate rock
-```
-
-### 2. 数据准备
-
-```
-data/
-├── dom3/
-│   ├── DOM.tif         # 正射影像 (由 OSGB 模型导出)
-│   └── DOM.tfw         # 地理配准六参数文件
-└── pointcloud3/
-    └── Data/
-        ├── BlockB.laz  # OSGB 模型转换的点云 BlockB
-        └── BlockY.laz  # OSGB 模型转换的点云 BlockY (与 B 拼接为完整区域)
-```
-
-> **首次使用时**：如果 LAZ 点云使用局部坐标系（非绝对坐标），需要先计算偏移量：
-> ```bash
-> python -c "
-> import laspy, numpy as np
-> # DOM 世界坐标范围
-> dom_xmin, dom_xmax = 623422.47, 623495.16
-> dom_ymin, dom_ymax = 4678529.33, 4678756.62
-> # LAZ 局部坐标范围
-> laz = laspy.read('data/pointcloud3/Data/BlockB.laz')
-> print(f'OFFSET_X = {dom_xmin - laz.x.min():.6f}')
-> print(f'OFFSET_Y = {dom_ymin - laz.y.min():.6f}')
-> "
-> ```
-> 将结果填入 `experiments/visualize_pc/run_visualize.py` 中的 `LAZ_OFFSET_X/Y`。
-
-### 3. 运行完整流程
-
-```bash
-# ── 步骤 ①: 切片 ──────────────────────────────────
-# 两种方法任选其一 (或跑全部做对比)
-python experiments/slicing/run_slicing_experiment.py --method sahi
-python experiments/slicing/run_slicing_experiment.py --method quadtree_dom
-python experiments/slicing/run_slicing_experiment.py --method all
-
-# 查看切片覆盖效果
-python experiments/slicing/visualize_tiles.py --all
-# 生成 outputs/comparison_side_by_side.png
-
-# ── 步骤 ②: 检测 ──────────────────────────────────
-python experiments/detection/run_detection_experiment.py --source sahi
-# 输出: outputs/sahi/detections.json + detection_stats.json
-
-# 快速测试 (只处理前 10 个 tile)
-python experiments/detection/run_detection_experiment.py --source sahi --limit 10
-
-# ── 步骤 ③: 融合 ──────────────────────────────────
-python experiments/fusion/run_fusion_experiment.py --source sahi --method correlation_clustering
-# 输出: outputs/sahi/correlation_clustering/fusion_stats.json
-
-# ── 步骤 ④: 可视化 ────────────────────────────────
-python experiments/visualize_pc/run_visualize.py
-# 打开 Open3D 窗口: 石头彩色, 非石头灰色
-```
+DOM 和点云**来自同一 OSGB 模型**，因此坐标系范围一致。DOM 使用绝对地理坐标（623xxx, 4678xxx），点云使用局部坐标（-76~-4, -58~169），两者跨度相同（72.7m × 227.3m），通过 `LAZ_OFFSET_X/Y` 转换。
 
 ---
 
-## 各模块详细说明
+### ① 切片 (Slicing)
 
-### Slicing — 切片 (为什么需要？)
+**代码位置**：`experiments/slicing/run_slicing_experiment.py`
 
-DOM 正射影像可能非常大（7000×23000 px），无法直接送入 YOLO（输入尺寸 1024px）。切片把大图切成小 tile，逐个推理。
+**输入**：`DOM.tif`
 
-**两种方法的区别：**
+**配置**：`experiments/configs/slicing/`
 
-| | SAHI | Quadtree-DOM |
-|--|------|-------------|
-| tile 尺寸 | 固定 1024×1024 | 自适应 10~23m (≈1000~2300px) |
-| tile 数量 | 较多 (200 个) | 较少 (129 个) |
-| 覆盖 | 全覆盖 | 只覆盖有纹理的区域 |
-| 速度 | 切片 3.4s / 检测 341s | 切片 1.5s / 检测 440s |
-| 适用 | 不漏检为首要目标 | 希望减少检测量 |
+**支持两种方法**：
 
-**参数说明**（`configs/slicing/sahi.json`）：
+| 方法 | 配置文件 | 策略 | 适用场景 |
+|------|---------|------|---------|
+| **SAHI** | `sahi.json` | 固定 1024×1024 滑窗扫描全图 | 全覆盖、不漏检为首要目标 |
+| **Quadtree-DOM** | `quadtree_dom.json` | 按 Canny 边缘密度自适应四分，纹理丰富区细切、平坦区留大 tile | 节省检测量、加快推理 |
+
+**共同逻辑**：
+- 跳过黑色无数据区域（`min_content_ratio`）
+- 相邻 tile 设置重叠避免边界被切断（`overlap` / `tile_overlap_m`）
+- 输出每个 tile 的 `pixel_origin`（在 DOM 中的像素起点），供检测阶段裁取原图
+
+**输出**：`outputs/{method}/tile_stats.json`
 
 ```json
 {
-  "patch_size": 1024,        // tile 像素尺寸 (模型输入尺寸)
-  "overlap": 0.1,            // 相邻 tile 重叠比例 (10% = 102px ≈ 1m)
-  "min_content_ratio": 0.25, // 有效内容低于 25% 的 tile 跳过 (黑色区域)
-  "include_edge_patches": true // 是否在图像边缘补充 tile
+  "method": "sahi",
+  "total_patches": 320,
+  "kept_patches": 235,
+  "coverage_ratio": 1.0,
+  "patches": [
+    {
+      "patch_id": "patch_000000",
+      "pixel_origin": [0, 0],
+      "world_bounds": [623422.47, ..., ...],
+      "status": "kept"
+    }
+  ]
 }
 ```
 
-### Detection — 检测 (YOLO 输出了什么？)
+---
 
-每个 tile 经过 YOLOv8-seg 推理，对每个检测到的 mask：
+### ② 检测 (Detection)
 
-1. **面积过滤**：`area_px × resolution²` → 等效直径 ≥ `min_stone_diameter_m` 才保留
-2. **坐标转换**：mask 质心从像素坐标 → 世界坐标 (通过 TFW)
-3. **RLE 编码**：二值 mask 用游程编码压缩（COCO 格式），相比存多边形更精确，相比存原始像素更紧凑
+**代码位置**：`experiments/detection/run_detection_experiment.py`
 
-**输出数据用途**：
+**输入**：
+- `tile_stats.json`（从哪里读 tile 坐标）
+- `DOM.tif`（按坐标裁图）
+- `models/best.pt`（YOLOv8-seg 模型）
 
-```
-detections.json 中的字段：
-├── score                → 融合时算平均/最高置信度
-├── area_m2              → 统计石头大小分布
-├── equivalent_diameter_m → 同上
-├── centroid_world       → 融合时算检测间距离
-├── bbox_world           → 融合时算 IoU；可视化时快速裁剪
-├── pixel_origin         → 将 mask 轮廓从像素→世界坐标
-├── rle_mask             → 可视化时精确裁剪点云
-└── source_patch_id      → 融合时跳过同 tile 比较
-```
+**配置**：`experiments/configs/detection/default.json`
 
-### Fusion — 融合 (为什么要合并？)
+**使用的方法**：
+- **YOLOv8-seg**（Ultralytics）— 实例分割模型
+- COCO **RLE 游程编码** — 压缩存储二值 mask
 
-SAHI 切片有 10% overlap，同一个石头可能出现在两个相邻 tile 中 → 产生重复检测。
+**流程**：
+1. 遍历每个 kept tile，从 DOM 裁出 tile 图像
+2. YOLO 推理 → 得到 masks
+3. 对每个 mask 过滤面积（≥ `min_stone_diameter_m`）、计算质心世界坐标、RLE 压缩存储
 
-**启发式**：简单直接，质心距离 + bbox IoU 都超过阈值就合并。
+**输出**：`outputs/{source}/detections.json`
 
-**相关聚类**：计算每对检测的"亲和度"：
-
-```
-亲和度 = exp(-距离² / 2×0.7²) × (1 + 0.3×IoU) × tile_boost
-                                                         ↑
-                                                  同 tile 1.2x
-```
-
-亲和度 ≥ 0.45 → 同一石头。用 Pivot 算法找出所有聚类。
-
-### Visualize PC — 点云可视化 (如何显示？)
-
-```
-fusion_stats.json 中的每个 stone:
-└── detection_indices: [3, 7]  ←─ 指向 detections.json 中的两条检测
-
-→ 取出 detections[3] 和 detections[7]
-→ 解码 RLE mask → 提取轮廓多边形
-→ pixel_origin + TFW → DOM 世界坐标
-→ 减去 LAZ_OFFSET → LAZ 局部坐标
-→ 用多边形裁剪 LAZ 点云 (point-in-polygon)
-→ 着色 → Open3D 显示
+```json
+[
+  {
+    "score": 0.85,
+    "area_m2": 2.34,
+    "equivalent_diameter_m": 1.73,
+    "centroid_world": [623432.12, 4678745.33],
+    "bbox_world": [623429.66, 4678743.35, 623434.70, 4678749.39],
+    "pixel_origin": [717, 717],
+    "rle_mask": {"size": [1024, 1024], "counts": [0, 42, 1, ...]},
+    "source_patch_id": "patch_000000"
+  }
+]
 ```
 
-**为什么需要 LAZ_OFFSET？**
-
-OSGB 模型导出的 DOM 使用绝对地理坐标（623xxx, 4678xxx），而 LAZ 点云使用局部坐标（-76~-4, -58~169）。两者跨度相同（72.7m × 227.3m），只是原点不同。通过偏移量将多边形从 DOM 坐标转换到 LAZ 坐标，才能在原始 LAZ 点上做过滤。
+| 字段 | 用途 |
+|------|------|
+| `score` | 融合时统计平均/最高置信度 |
+| `centroid_world` | 融合时计算检测间距离 |
+| `bbox_world` | 融合时计算 IoU；可视化时快速 bbox 裁剪 |
+| `pixel_origin` + `rle_mask` | 转换为世界坐标多边形（用于可视化点云裁剪） |
+| `source_patch_id` | 融合时跳过同 tile 比较 |
 
 ---
 
-## 常见问题
+### ③ 融合 (Fusion)
 
-### Q: 检测数比预期的少很多
-检查 `conf` 阈值是否太高：
+**代码位置**：`experiments/fusion/run_fusion_experiment.py`
+
+**输入**：`detections.json`（来自检测阶段）
+
+**输出**：`outputs/{source}/{method}/fusion_stats.json`
+
+**使用的方法**：
+
+| 方法 | 配置文件 | 原理 |
+|------|---------|------|
+| **启发式合并** (Heuristic) | `heuristic.json` | 质心距离 + bbox IoU 均超过阈值 → 合并（跳过同 tile） |
+| **相关聚类** (Correlation Clustering) | `correlation_clustering.json` | 计算每对检测的亲和度（距离高斯核 × IoU 加成 × 同 tile 加成），阈值化后 Pivot 3-近似算法分组 |
+
+**解决的问题**：SAHI 切片有 10% overlap，同一石头可能出现在两个相邻 tile → 融合将重复检测合并为一块石头。
+
+**输出字段**：
 
 ```json
-// experiments/configs/detection/default.json
-"conf": 0.35   // 改低 → 更多检测 (含误检)
-"conf": 0.45   // 改高 → 更少检测 (更精确)
+{
+  "source": "sahi",
+  "method": "correlation_clustering",
+  "input_detections": 458,
+  "output_stones": 274,
+  "stones": [
+    {
+      "stone_id": "stone_000006",
+      "source_detection_count": 2,
+      "bbox_world": [623429.66, 4678743.35, 623434.70, 4678749.39],
+      "detection_indices": [3, 7]
+    }
+  ]
+}
 ```
 
-### Q: 某个大检测框里没有石头
-→ 用 visualize_pc 确认是假阳性
-→ 加 `--min-z-range 0.3` 自动过滤平坦地面
+`detection_indices` 是可视化阶段回溯检测 mask 的关键字段。
 
-### Q: 点云可视化窗口打开但看不见石头
-→ 确认 LAZ_OFFSET_X/Y 是否正确
-→ 运行 `python experiments/visualize_pc/run_visualize.py`
-→ 检查终端输出的 `已着色` 点数
+---
 
-### Q: 融合后石头数仍然接近检测数
-→ 检查 `heuristic.json` 的 `cross_tile_distance_m` 是否太小
-→ 检查 `correlation_clustering.json` 的 `positive_weight_threshold` 是否太高
+### ④ 可视化 (Visualize PC)
+
+**代码位置**：`experiments/visualize_pc/run_visualize.py`
+
+**输入**：
+- `fusion_stats.json`（石头 bbox + detection_indices）
+- `detections.json`（RLE mask + pixel_origin）
+- `BlockB.laz` + `BlockY.laz`（原始点云）
+
+**使用的方法**：
+- **laspy** — 读取 LAZ 点云
+- **Open3D** — 3D 点云渲染
+- **cv2.pointPolygonTest** — 点云快速多边形裁剪
+- **COCO RLE decode** — 从游程编码恢复二值 mask
+
+**流程**：
+1. 加载 LAZ 点云（原始局部坐标，约 1.87 亿点）
+2. 降采样至约 300 万点
+3. 遍历每个石头：
+   - 回溯 `detection_indices` → 找到关联检测
+   - 解码 RLE → mask → 多边形（像素坐标 → DOM 世界坐标 → LAZ 局部坐标）
+   - point-in-polygon 过滤点云 → 匹配的点着色为循环颜色
+4. 未匹配任何石头的点 → 灰色
+
+**显示效果**：
+
+| 区域 | 颜色 |
+|------|------|
+| 非石头区域 | 灰色 `(0.6, 0.6, 0.6)` |
+| 石头 1..12 | 🔴🟢🔵🟠🟣 等 12 色循环 |
+| 操作 | 左键旋转 · 滚轮缩放 · 右键平移 |
 
 ---
 
@@ -373,7 +235,7 @@ OSGB 模型导出的 DOM 使用绝对地理坐标（623xxx, 4678xxx），而 LAZ
 
 ```
 ├── experiments/
-│   ├── configs/                    # 所有参数配置
+│   ├── configs/                  # 所有参数配置
 │   │   ├── slicing/
 │   │   │   ├── sahi.json
 │   │   │   └── quadtree_dom.json
@@ -382,26 +244,78 @@ OSGB 模型导出的 DOM 使用绝对地理坐标（623xxx, 4678xxx），而 LAZ
 │   │   └── fusion/
 │   │       ├── heuristic.json
 │   │       └── correlation_clustering.json
-│   ├── slicing/                    # 切片实验
+│   ├── slicing/                  # 切片实验
 │   │   ├── run_slicing_experiment.py
 │   │   └── visualize_tiles.py
-│   ├── detection/                  # YOLO 检测实验
+│   ├── detection/                # YOLO 检测实验
 │   │   └── run_detection_experiment.py
-│   ├── fusion/                     # 融合实验
+│   ├── fusion/                   # 融合实验
 │   │   ├── run_fusion_experiment.py
 │   │   └── visualize_fusion.py
-│   ├── visualize_pc/               # 点云可视化 (新增)
+│   ├── visualize_pc/             # 点云可视化
 │   │   └── run_visualize.py
-│   ├── visualization/              # 其他独立可视化工具
-│   └── utils/                      # 共享工具函数
+│   └── utils/                    # 共享工具
 ├── models/
-│   └── best.pt                     # YOLOv8-seg 预训练模型
-├── data/                           # 数据 (Git 不跟踪)
+│   └── best.pt                   # YOLOv8-seg 模型
+├── data/                         # 数据 (Git 不跟踪)
+├── rockseg-references/           # 参考文献
 ├── requirements.txt
 ├── environment.yml
 └── README.md
 ```
 
-## 引用
+---
 
-项目参考文献见 `rockseg-references/rockseg-references.html`。
+## 环境与运行
+
+```bash
+# 安装
+conda env create -f environment.yml
+conda activate rock
+
+# 切片
+python experiments/slicing/run_slicing_experiment.py --method all
+
+# 检测
+python experiments/detection/run_detection_experiment.py --source all
+
+# 融合
+python experiments/fusion/run_fusion_experiment.py --source all --method all
+
+# 可视化
+python experiments/visualize_pc/run_visualize.py
+```
+
+---
+
+## 🔮 未来完善计划
+
+| 优先级 | 模块 | 计划 |
+|--------|------|------|
+| ⭐⭐⭐ | **融合评估** | 引入人工标注真值，量化评估融合效果（准确率/召回率/F1） |
+| ⭐⭐⭐ | **假阳性过滤** | 利用点云高度差（Z range）自动标记平坦地面误检 |
+| ⭐⭐⭐ | **全量检测** | 配置合理参数后跑满全部切片（当前仅 458 检测），获取完整石头清单 |
+| ⭐⭐ | **参数自动调优** | 为 SAHI / Quadtree / Fusion 引入网格搜索或贝叶斯调参 |
+| ⭐⭐ | **体积估算** | 基于 mask 裁剪后的点云，用 alpha shape / convex hull 估算石块体积 |
+| ⭐⭐ | **检测框标注** | 在 DOM 上绘制检测框 + mask，便于人工校验 |
+| ⭐ | **Web 调参器** | 重写切片/融合的实时 Web 调参界面 |
+| ⭐ | **多模型支持** | 除 YOLOv8-seg 外支持 SAM / Mask R-CNN 等模型 |
+
+---
+
+## 常见问题
+
+### 检测结果看起来太少？
+检查 `configs/detection/default.json` 中的 `conf: 0.35` 是否太高，尝试降低到 0.25 再跑。
+
+### 可视化看不到石头？
+确认 `run_visualize.py` 中的 `LAZ_OFFSET_X/Y` 是否正确，终端会输出"已着色"的点数。
+
+### 一块石头的检测框对应明显是空地？
+运行 `python experiments/visualize_pc/run_visualize.py`，石头区域会着色显示，如果是平坦地面会自动显示为均匀灰色。
+
+---
+
+<p align="center">
+  <sub>GitHub: <a href="https://github.com/Midwinter66/rockseg">Midwinter66/rockseg</a></sub>
+</p>
