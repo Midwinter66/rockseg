@@ -1,6 +1,6 @@
 # RockSeg — 航拍岩块检测与点云可视化
 
-从 **OSGB 模型**转换而来的正射影像（DOM）和 LiDAR 点云中，自动检测、分割岩块，并在 3D 点云中可视化。
+从 **OSGB 模型**转换而来的正射影像（DOM）和点云中，自动检测、分割岩块，并在 3D 点云中可视化。
 
 ---
 
@@ -10,9 +10,9 @@
 ┌══════════════════════════════════════════════════════════════════════┐
 │                       原始数据 (不纳入 Git)                          │
 │                                                                     │
-│  data/dom3/DOM.tif  ←── OSGB 模型转换的正射影像 (GeoTIFF)          │
-│  data/dom3/DOM.tfw  ←── 地理配准文件 (像素→世界坐标)                │
-│  data/pointcloud3/Data/BlockB.laz  ←── OSGB 转换的 LiDAR 点云      │
+│  data/dom3/DOM.tif       ←── OSGB 模型转换的正射影像 (GeoTIFF)     │
+│  data/dom3/DOM.tfw       ←── 地理配准文件 (像素→世界坐标)           │
+│  data/pointcloud3/Data/BlockB.laz  ←── OSGB 模型转换的点云 (LAZ)   │
 │  data/pointcloud3/Data/BlockY.laz  ←── (与 BlockB 拼接为完整区域)  │
 └──────────────────────────────────────────────────────────────────────┘
          │
@@ -158,7 +158,7 @@
 │  输入:                                                              │
 │    ├─ fusion_stats.json     ←─ 石头的 bbox + detection_indices      │
 │    ├─ detections.json       ←─ 每个检测的 RLE mask + pixel_origin   │
-│    └─ BlockB.laz + BlockY.laz  ←─ LiDAR 点云                       │
+│    └─ BlockB.laz + BlockY.laz  ←─ OSGB 点云 (LAZ 格式)            │
 │                                                                     │
 │  配置: 代码中的常量                                                  │
 │    LAZ_OFFSET_X = 623499.1061  ←─ LAZ 局部坐标 → DOM 坐标的偏移    │
@@ -208,8 +208,8 @@ data/
 │   └── DOM.tfw         # 地理配准六参数文件
 └── pointcloud3/
     └── Data/
-        ├── BlockB.laz  # LiDAR 点云 BlockB (由 OSGB 导出)
-        └── BlockY.laz  # LiDAR 点云 BlockY (与 B 拼接为完整区域)
+        ├── BlockB.laz  # OSGB 模型转换的点云 BlockB
+        └── BlockY.laz  # OSGB 模型转换的点云 BlockY (与 B 拼接为完整区域)
 ```
 
 > **首次使用时**：如果 LAZ 点云使用局部坐标系（非绝对坐标），需要先计算偏移量：
