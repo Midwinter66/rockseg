@@ -1,37 +1,56 @@
 # Python
 __pycache__/
-*.pyc
+*.py[cod]
 *.pyo
 *.egg-info/
-dist/
 build/
+dist/
 
-# Large data files — download separately (see README)
+# Local environments and secrets
+.env
+.env.*
+.venv/
+venv/
+
+# Raw research data (kept outside GitHub)
 data/
 *.tif
+*.tiff
 *.tfw
-*.ply
+*.prj
+*.osgb
 *.las
 *.laz
+*.ply
 
-# YOLO model — keep best.pt, ignore other .pt files
+# Model checkpoints: keep the selected paper model only
 models/*.pt
 !models/best.pt
 
-# Experiment outputs (generated at runtime)
+# Generated experiment artifacts
 experiments/**/outputs/
 experiments/**/uploads/
+experiments/runs/
+experiments/reports/*/
+experiments/reports/*.docx
 
-# IDE / OS / Tools
+# Publisher files and generated reference pages
+rockseg-references/*.pdf
+rockseg-references/_shared/
+
+# Local application state
+Ultralytics/
+.agents/
+.uploads/
+.reasonix/
 .vscode/
 .idea/
 .codegraph/
 .claude/
-.reasonix/
+
+# OS and editor files
 *.swp
+*.tmp
+*.bak
 .DS_Store
 Thumbs.db
-
-# Environment
-.env
-.venv/

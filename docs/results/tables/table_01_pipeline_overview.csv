@@ -1,0 +1,6 @@
+﻿Stage,Input count,Output count,Keep ratio,Notes
+Mask candidates,62015,62015,1.0,Raw segmentation candidates before diameter filtering
+Detection,62015,7349,0.1185,After min_stone_diameter_m = 0.5 m filtering
+Fusion candidates,7349,6258,0.8515,Cross-tile duplicate grouping candidates
+Accepted fused stones,6258,6071,0.9701,After 3D validation
+Volume QC passed,6071,6067,0.9993,2.5D volume retained for final statistics

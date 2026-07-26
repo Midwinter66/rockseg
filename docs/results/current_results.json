@@ -1,0 +1,299 @@
+{
+  "snapshot_version": "2026-07-main-scene-v1",
+  "scope": {
+    "source": "quadtree_dom",
+    "fusion_method": "correlation_clustering",
+    "minimum_equivalent_diameter_m": 0.5,
+    "volume_method": "2d5_with_ground",
+    "qc_profile": "paper"
+  },
+  "scene": {
+    "name": "dom2_pointcloud2",
+    "data_origin": "OSGB-derived photogrammetric products (not LiDAR)",
+    "dom": {
+      "file": "data/dom2/DOM.tif",
+      "width_px": 8783,
+      "height_px": 21713,
+      "resolution_x_m": 0.01,
+      "resolution_y_m": 0.01,
+      "area_m2": 19070.5279,
+      "crs": "EPSG:4536"
+    },
+    "point_cloud": {
+      "files": [
+        {
+          "name": "BlockB.laz",
+          "point_count": 61641369
+        },
+        {
+          "name": "BlockY.laz",
+          "point_count": 85080023
+        }
+      ],
+      "total_point_count": 146721392,
+      "coordinate_mode": "absolute_world",
+      "x_shift": 0.0,
+      "y_shift": 0.0
+    }
+  },
+  "slicing": {
+    "sahi": {
+      "total_tiles": 250,
+      "kept_tiles": 128,
+      "coverage_ratio": 1.0
+    },
+    "quadtree_dom": {
+      "total_tiles": 456,
+      "kept_tiles": 348,
+      "coverage_ratio": 1.0
+    }
+  },
+  "detection": {
+    "raw_mask_candidates": 62015,
+    "diameter_filtered_detections": 7349,
+    "processed_tiles": 348,
+    "failed_tiles": 0,
+    "diameter_m": {
+      "min": 0.5001,
+      "max": 3.2858,
+      "mean": 0.7272,
+      "median": 0.6487,
+      "p25": 0.5611,
+      "p75": 0.8109
+    },
+    "area_m2": {
+      "min": 0.1964,
+      "max": 8.4794,
+      "mean": 0.4616,
+      "median": 0.3305,
+      "p25": 0.2473,
+      "p75": 0.5164
+    },
+    "confidence": {
+      "min": 0.3501,
+      "max": 0.9753,
+      "mean": 0.7866,
+      "median": 0.8453,
+      "p25": 0.7015,
+      "p75": 0.911
+    }
+  },
+  "fusion": {
+    "input_detections": 7349,
+    "candidate_stones": 6258,
+    "accepted_stones": 6071,
+    "rejected_stones": 187,
+    "candidate_acceptance_ratio": 0.9701,
+    "merge_ratio": 0.1739,
+    "accepted_diameter_m": {
+      "count": 6071,
+      "min": 0.5001,
+      "max": 2.3932,
+      "mean": 0.7265,
+      "median": 0.6528,
+      "p25": 0.5653,
+      "p75": 0.8109
+    },
+    "validation_3d": {
+      "enabled": true,
+      "candidate_stones": 6258,
+      "accepted_stones": 6071,
+      "rejected_stones": 187,
+      "acceptance_ratio": 0.9701,
+      "rejection_ratio": 0.0299,
+      "rejection_reasons": {
+        "insufficient_elevated_ratio": 150,
+        "insufficient_z_range": 85,
+        "insufficient_p90_height": 169,
+        "too_few_points": 66
+      },
+      "metrics": {
+        "point_count": {
+          "count": 6258,
+          "min": 0.0,
+          "max": 159889.0,
+          "mean": 11598.98,
+          "median": 7800.5,
+          "p25": 5087.5,
+          "p75": 13347.25
+        },
+        "z_range_m": {
+          "count": 6258,
+          "min": 0.0,
+          "max": 5.243,
+          "mean": 0.8293,
+          "median": 0.755,
+          "p25": 0.545,
+          "p75": 1.0389
+        },
+        "p90_height_m": {
+          "count": 6258,
+          "min": -0.3931,
+          "max": 4.6713,
+          "mean": 0.4652,
+          "median": 0.4224,
+          "p25": 0.2967,
+          "p75": 0.583
+        },
+        "elevated_ratio": {
+          "count": 6258,
+          "min": 0.0,
+          "max": 1.0,
+          "mean": 0.7218,
+          "median": 0.7584,
+          "p25": 0.627,
+          "p75": 0.8592
+        }
+      },
+      "ground_dem": {
+        "resolution_m": 0.5,
+        "percentile": 5,
+        "min_points_per_cell": 3,
+        "xmin": 624181.5,
+        "ymin": 4678356.5,
+        "xmax": 624270.5,
+        "ymax": 4678570.5,
+        "nx": 178,
+        "ny": 428,
+        "valid_cell_count": 76184,
+        "coverage_ratio": 1.0
+      },
+      "filter": {
+        "min_points": 60,
+        "min_z_range_m": 0.18,
+        "elevated_height_m": 0.08,
+        "min_p90_height_m": 0.12,
+        "min_elevated_ratio": 0.2,
+        "bbox_pad_m": 0.5,
+        "index_cell_size_m": 1.0
+      }
+    }
+  },
+  "volume": {
+    "processed_stones": 6071,
+    "qc_passed": 6067,
+    "qc_failed": 4,
+    "qc_pass_ratio": 0.9993,
+    "volume_2d5_m3": {
+      "count": 6067,
+      "min": 0.0002,
+      "max": 5.2321,
+      "mean": 0.2096,
+      "median": 0.121,
+      "std": 0.2892,
+      "p25": 0.0645,
+      "p75": 0.235,
+      "sum": 1271.5422
+    },
+    "volume_2d_proxy_m3": {
+      "count": 6067,
+      "min": 0.0655,
+      "max": 7.1769,
+      "mean": 0.2801,
+      "median": 0.1457,
+      "std": 0.4592,
+      "p25": 0.0946,
+      "p75": 0.2792,
+      "sum": 1699.2841
+    },
+    "comparison": {
+      "comparable_stones": 6067,
+      "proxy_2d_to_2d5": {
+        "count": 6067,
+        "min": 0.1337,
+        "max": 337.5,
+        "mean": 2.1322,
+        "median": 1.3565,
+        "std": 6.2442,
+        "p25": 0.9169,
+        "p75": 2.1143,
+        "sum": 12935.9886
+      },
+      "proxy_minus_2d5_m3": {
+        "count": 6067,
+        "min": -2.8009,
+        "max": 5.9195,
+        "mean": 0.0705,
+        "median": 0.0359,
+        "std": 0.2985,
+        "p25": -0.0129,
+        "p75": 0.0891,
+        "sum": 427.7419
+      },
+      "pearson_r": 0.7733
+    },
+    "diameter_bins": {
+      "profile": "paper",
+      "bin_edges_m": [
+        0.5,
+        0.75,
+        1.0,
+        1.5,
+        10.0
+      ],
+      "rows": [
+        {
+          "bin_label": "0.50-0.75",
+          "diameter_lo_m": 0.5,
+          "diameter_hi_m": 0.75,
+          "stone_count": 4119,
+          "count_ratio": 0.6789,
+          "volume_2d5_sum_m3": 435.7007,
+          "volume_2d5_ratio": 0.3427,
+          "volume_2d5_mean_m3": 0.1058,
+          "volume_2d_proxy_sum_m3": 489.9193,
+          "volume_2d_proxy_ratio": 0.2883,
+          "volume_2d_proxy_mean_m3": 0.1189,
+          "proxy_to_2d5_mean_ratio": 1.1244
+        },
+        {
+          "bin_label": "0.75-1.00",
+          "diameter_lo_m": 0.75,
+          "diameter_hi_m": 1.0,
+          "stone_count": 1274,
+          "count_ratio": 0.21,
+          "volume_2d5_sum_m3": 353.8543,
+          "volume_2d5_ratio": 0.2783,
+          "volume_2d5_mean_m3": 0.2778,
+          "volume_2d_proxy_sum_m3": 421.6179,
+          "volume_2d_proxy_ratio": 0.2481,
+          "volume_2d_proxy_mean_m3": 0.3309,
+          "proxy_to_2d5_mean_ratio": 1.1915
+        },
+        {
+          "bin_label": "1.00-1.50",
+          "diameter_lo_m": 1.0,
+          "diameter_hi_m": 1.5,
+          "stone_count": 575,
+          "count_ratio": 0.0948,
+          "volume_2d5_sum_m3": 332.2522,
+          "volume_2d5_ratio": 0.2613,
+          "volume_2d5_mean_m3": 0.5778,
+          "volume_2d_proxy_sum_m3": 485.2052,
+          "volume_2d_proxy_ratio": 0.2855,
+          "volume_2d_proxy_mean_m3": 0.8438,
+          "proxy_to_2d5_mean_ratio": 1.4604
+        },
+        {
+          "bin_label": "1.50-10.00",
+          "diameter_lo_m": 1.5,
+          "diameter_hi_m": 10.0,
+          "stone_count": 99,
+          "count_ratio": 0.0163,
+          "volume_2d5_sum_m3": 149.735,
+          "volume_2d5_ratio": 0.1178,
+          "volume_2d5_mean_m3": 1.5125,
+          "volume_2d_proxy_sum_m3": 302.5417,
+          "volume_2d_proxy_ratio": 0.178,
+          "volume_2d_proxy_mean_m3": 3.056,
+          "proxy_to_2d5_mean_ratio": 2.0205
+        }
+      ]
+    }
+  },
+  "validation_status": {
+    "current_scene_manual_detection_ground_truth": "not_completed",
+    "per_stone_volume_ground_truth": "not_available",
+    "note": "Do not interpret the 3D validation acceptance ratio or volume QC pass ratio as detection accuracy."
+  }
+}

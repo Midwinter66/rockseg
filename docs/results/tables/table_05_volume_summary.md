@@ -1,0 +1,23 @@
+# Volume Summary
+
+| Metric | Value |
+| --- | --- |
+| Processed stones | 6071 |
+| Selected QC profile | paper |
+| QC passed stones | 6067 |
+| QC failed stones | 4 |
+| QC pass ratio | 0.9993 |
+| 2.5D mean volume (m3) | 0.2096 |
+| 2.5D median volume (m3) | 0.1210 |
+| 2.5D p25 volume (m3) | 0.0645 |
+| 2.5D p75 volume (m3) | 0.2350 |
+| 2.5D total volume (m3) | 1271.5422 |
+| 2D proxy mean volume (m3) | 0.2801 |
+| 2D proxy median volume (m3) | 0.1457 |
+| 2D proxy total volume (m3) | 1699.2841 |
+| Ground DEM raw coverage ratio | 0.4172 |
+| Ground DEM filled coverage ratio | 1.0000 |
+| 2D proxy / 2.5D median ratio | 1.3565 |
+| 2D proxy / 2.5D mean ratio | 2.1322 |
+| 2D proxy minus 2.5D mean (m3) | 0.0705 |
+| Method comparison Pearson r | 0.7733 |

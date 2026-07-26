@@ -3,7 +3,7 @@
 
 Usage:
     from experiments.utils.metrics import compute_tile_stats
-    from experiments.utils.visualization import draw_tile_overlay
+    from experiments.utils.visualization import draw_sahi_overlay, draw_quadtree_overlay
     from experiments.utils.report import build_comparison_html
 """
 

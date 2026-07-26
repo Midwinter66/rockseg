@@ -21,7 +21,7 @@
 """
 
 from __future__ import annotations
-import argparse, json, sys, time
+import argparse, json, shutil, sys, time
 from pathlib import Path
 
 # 项目根
@@ -41,9 +41,17 @@ from experiments.utils.visualization import (
 )
 
 # ── 常量: 数据路径 ─────────────────────────────────────────────────
-DOM_PATH = PROJECT_ROOT / "data" / "dom3" / "DOM.tif"
-DOM_WORLD_PATH = PROJECT_ROOT / "data" / "dom3" / "DOM.tfw"
+DOM_PATH = PROJECT_ROOT / "data" / "dom2" / "DOM.tif"
+DOM_WORLD_PATH = PROJECT_ROOT / "data" / "dom2" / "DOM.tfw"
 SELF_DIR = Path(__file__).resolve().parent  # experiments/slicing/
+
+
+def _overlay_paths(out_dir: Path) -> dict[str, Path]:
+    return {
+        "paper": out_dir / "tile_overlay_paper.png",
+        "audit": out_dir / "tile_overlay_audit.png",
+        "compat": out_dir / "tile_overlay.png",
+    }
 
 # 所有已注册的切片方法
 ALL_METHODS = ["sahi", "quadtree_dom"]
@@ -90,6 +98,69 @@ def _get_dom_info() -> dict:
     return {"width": w, "height": h, "resolution_m": res,
             "dom_bounds_world": [xmin, ymin, xmax, ymax],
             "tfw_gt": gt}
+
+
+def _build_method_summary(method: str, stats: dict, out_dir: Path) -> dict:
+    overlay_paths = _overlay_paths(out_dir)
+    summary = {
+        "method": method,
+        "output_dir": str(out_dir),
+        "detail_json": str(out_dir / "tile_stats.json"),
+        "summary_json": str(out_dir / "slicing_summary.json"),
+        "overlay_image": str(overlay_paths["compat"]),
+        "overlay_image_paper": str(overlay_paths["paper"]),
+        "overlay_image_audit": str(overlay_paths["audit"]),
+        "elapsed_seconds": float(stats.get("elapsed_seconds", 0.0)),
+        "coverage_ratio": float(stats.get("coverage_ratio", 0.0)),
+        "config": stats.get("config", {}),
+    }
+
+    if method == "sahi":
+        patch_dist = stats.get("patch_size_distribution", {})
+        summary.update({
+            "total_tiles": int(stats.get("total_patches", 0)),
+            "kept_tiles": int(stats.get("kept_patches", 0)),
+            "skipped_tiles": int(stats.get("skipped_patches", 0)),
+            "tile_size_px": int(patch_dist.get("pixel_size", 0)),
+            "all_same_size": bool(patch_dist.get("all_same_size", False)),
+        })
+    else:
+        tile_dist = stats.get("tile_size_distribution_m2", {})
+        summary.update({
+            "total_tiles": int(stats.get("total_tiles", 0)),
+            "kept_tiles": int(stats.get("kept_tiles", 0)),
+            "skipped_tiles": int(stats.get("skipped_tiles", 0)),
+            "dom_area_m2": float(stats.get("dom_area_m2", 0.0)),
+            "unique_coverage_m2": float(stats.get("unique_coverage_m2", 0.0)),
+            "tile_area_m2": {
+                "min": float(tile_dist.get("min", 0.0)),
+                "max": float(tile_dist.get("max", 0.0)),
+                "mean": float(tile_dist.get("mean", 0.0)),
+            },
+        })
+    return summary
+
+
+def _write_method_summary(method: str, stats: dict, out_dir: Path) -> dict:
+    summary = _build_method_summary(method, stats, out_dir)
+    (out_dir / "slicing_summary.json").write_text(
+        json.dumps(summary, indent=2, ensure_ascii=False),
+        encoding="utf-8",
+    )
+    return summary
+
+
+def _write_results_summary(results: dict, output_root: Path) -> Path:
+    summary = {
+        "methods": results,
+    }
+    path = output_root / "results_summary.json"
+    path.write_text(json.dumps(summary, indent=2, ensure_ascii=False, default=str), encoding="utf-8")
+    return path
+
+
+def _write_compat_overlay(paper_path: Path, compat_path: Path) -> None:
+    shutil.copyfile(paper_path, compat_path)
 
 
 # ══════════════════════════════════════════════════════════════════════
@@ -235,7 +306,7 @@ def _run_sahi(config: dict, out_dir: Path) -> dict:
 
     t0 = time.perf_counter()
     dom = Image.open(DOM_PATH)
-    img = np.array(dom)
+    img = np.array(dom)#变成Numpy数组方便opencv读取
     if img.ndim == 3:
         img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR) if img.shape[2] == 3 else img
     h, w = img.shape[:2]
@@ -300,10 +371,32 @@ def _run_sahi(config: dict, out_dir: Path) -> dict:
     stats_path.write_text(json.dumps(stats, indent=2, ensure_ascii=False), encoding="utf-8")
 
     # 生成叠加图
-    overlay_path = out_dir / "tile_overlay.png"
-    draw_sahi_overlay(DOM_PATH, records, overlay_path, max_side=8000, line_thickness=2)
-    print(f"  [SAHI] 有效切片: {stats['kept_patches']}/{stats['total_patches']}, "
-          f"耗时: {elapsed:.2f}s, 图已保存: {overlay_path}")
+    overlay_paths = _overlay_paths(out_dir)
+    draw_sahi_overlay(
+        DOM_PATH,
+        records,
+        overlay_paths["paper"],
+        max_side=8000,
+        line_thickness=2,
+        stats=stats,
+        config=config,
+        variant="paper",
+    )
+    draw_sahi_overlay(
+        DOM_PATH,
+        records,
+        overlay_paths["audit"],
+        max_side=8000,
+        line_thickness=2,
+        stats=stats,
+        config=config,
+        variant="audit",
+    )
+    _write_compat_overlay(overlay_paths["paper"], overlay_paths["compat"])
+    print(
+        f"  [SAHI] 有效切片: {stats['kept_patches']}/{stats['total_patches']}, "
+        f"耗时: {elapsed:.2f}s, paper={overlay_paths['paper'].name}, audit={overlay_paths['audit'].name}"
+    )
 
     return stats
 
@@ -345,15 +438,29 @@ def _run_quadtree_dom(config: dict, out_dir: Path) -> dict:
     stats_path = out_dir / "tile_stats.json"
     stats_path.write_text(json.dumps(stats, indent=2, ensure_ascii=False), encoding="utf-8")
 
-    overlay_path = out_dir / "tile_overlay.png"
+    overlay_paths = _overlay_paths(out_dir)
     draw_quadtree_split_overlay(
         DOM_PATH, tiles, dom_info["dom_bounds_world"],
         img_size=(w, h),
-        output_path=overlay_path, max_side=8000, line_thickness=2,
+        output_path=overlay_paths["paper"], max_side=8000, line_thickness=2,
+        stats=stats,
+        config=config,
+        variant="paper",
     )
+    draw_quadtree_split_overlay(
+        DOM_PATH, tiles, dom_info["dom_bounds_world"],
+        img_size=(w, h),
+        output_path=overlay_paths["audit"], max_side=8000, line_thickness=2,
+        stats=stats,
+        config=config,
+        variant="audit",
+    )
+    _write_compat_overlay(overlay_paths["paper"], overlay_paths["compat"])
     kept = len([t for t in tiles if not t["skipped"]])
-    print(f"  [Quadtree-DOM] 有效tile: {kept}/{len(tiles)}, "
-          f"耗时: {elapsed:.2f}s, 图已保存: {overlay_path}")
+    print(
+        f"  [Quadtree-DOM] 有效tile: {kept}/{len(tiles)}, "
+        f"耗时: {elapsed:.2f}s, paper={overlay_paths['paper'].name}, audit={overlay_paths['audit'].name}"
+    )
     return stats
 
 
@@ -394,10 +501,16 @@ def main() -> None:
         try:
             runner = RUNNERS[method]
             stats = runner(cfg, out_dir)
+            summary = _write_method_summary(method, stats, out_dir)
             results[method] = {
                 "method": method,
-                "stats": stats,
+                "purpose": "Artifact manifest for slicing outputs. Full tile records live in tile_stats.json; concise manuscript-ready metrics live in slicing_summary.json.",
+                "stats_json": str(out_dir / "tile_stats.json"),
+                "summary_json": str(out_dir / "slicing_summary.json"),
                 "overlay_img": str(out_dir / "tile_overlay.png"),
+                "overlay_img_paper": str(out_dir / "tile_overlay_paper.png"),
+                "overlay_img_audit": str(out_dir / "tile_overlay_audit.png"),
+                "summary": summary,
             }
         except Exception as e:
             print(f"  FAILED: {e}")
@@ -410,7 +523,9 @@ def main() -> None:
         json.dumps(results, indent=2, ensure_ascii=False, default=str),
         encoding="utf-8",
     )
+    summary_path = _write_results_summary(results, SELF_DIR / "outputs")
     print(f"\nResults manifest: {manifest_path}")
+    print(f"Results summary: {summary_path}")
 
     if len(methods) > 1:
         print(f"\nRun:  python experiments/slicing/visualize_tiles.py")

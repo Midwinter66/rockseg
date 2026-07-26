@@ -6,5 +6,25 @@
     "cross_tile_iou_threshold": 0.3,
     "boundary_margin_m": 0.3,
     "boundary_bbox_padding_m": 0.25
+  },
+  "validation_3d": {
+    "enabled": true,
+    "ground_dem": {
+      "resolution_m": 0.5,
+      "percentile": 5,
+      "subsample_step": 100,
+      "min_points_per_cell": 3
+    },
+    "crop": {
+      "bbox_pad_m": 0.5,
+      "index_cell_size_m": 1.0
+    },
+    "filter": {
+      "min_points": 30,
+      "min_z_range_m": 0.12,
+      "elevated_height_m": 0.05,
+      "min_p90_height_m": 0.08,
+      "min_elevated_ratio": 0.1
+    }
   }
 }

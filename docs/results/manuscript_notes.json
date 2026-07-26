@@ -1,0 +1,10 @@
+{
+  "template_revision_notes": [
+    "The current template can be kept as the main skeleton for a Measurement manuscript.",
+    "Section 1.2 should avoid overclaiming absolute error evaluation because no manual ground-truth volume is available.",
+    "Section 3.3.2 should be updated to the current quadtree configuration: base_tile_size_m=10, min_tile_size_m=5, min_edge_density=0.10, tile_overlap_m=0.5, min_content_ratio=0.05.",
+    "Section 3.4.1 should state that the reported experiment uses single-scale inference at imgsz=1024; multi-scale remains an optional sensitivity setting rather than the main reported result.",
+    "Section 3.7 should explicitly state that evaluation is based on pipeline consistency, filtering behavior, fusion validation, and relative volume-method comparison, not manual stone-by-stone ground truth.",
+    "Section 4.6 Sensitivity Analysis can remain in the outline, but if no stable parameter study is finalized it should be shortened or moved to supplementary material."
+  ]
+}

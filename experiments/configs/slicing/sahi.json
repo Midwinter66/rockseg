@@ -3,7 +3,7 @@
   "method": "sahi",
   "patching": {
     "patch_size": 1024,
-    "overlap": 0.3,
+    "overlap": 0.15,
     "black_pixel_threshold": 5,
     "min_content_ratio": 0.1,
     "include_edge_patches": true

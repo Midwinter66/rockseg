@@ -1,0 +1,51 @@
+{
+  "ground_dem": {
+    "resolution_m": 0.5,
+    "percentile": 5,
+    "subsample_step": 100,
+    "min_points_per_cell": 3
+  },
+  "grid": {
+    "resolution_m": 0.05
+  },
+  "crop": {
+    "index_cell_size_m": 1.0,
+    "bbox_pad_m": 0.5
+  },
+  "selected_qc_profile": "paper",
+  "qc_profiles": {
+    "strict": {
+      "description": "Conservative QC for sensitivity analysis and debugging.",
+      "rules": {
+        "min_z_range_m": 0.1,
+        "min_points": 50,
+        "min_surface_area_m2": 0.0
+      }
+    },
+    "paper": {
+      "description": "Paper-facing QC focused on stable 2.5D volume estimation rather than repeated stone validation.",
+      "rules": {
+        "min_z_range_m": 0.08,
+        "min_points": 30,
+        "min_surface_area_m2": 0.0
+      }
+    }
+  },
+  "filter": {
+    "min_z_range_m": 0.1,
+    "min_points": 50,
+    "min_surface_area_m2": 0.0
+  },
+  "proxy_2d": {
+    "method": "equivalent_sphere_from_detection_diameter",
+    "diameter_source": "fusion_prior_equivalent_diameter_m"
+  },
+  "output": {
+    "save_per_stone": false,
+    "embed_stones_in_main_json": false,
+    "top_k_cases": 10,
+    "diameter_bins_m": [0.5, 0.75, 1.0, 1.5, 10.0],
+    "write_csv_tables": true,
+    "write_markdown_tables": true
+  }
+}
