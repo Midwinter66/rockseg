@@ -1,0 +1,14 @@
+{
+  "method": "quadtree_dom",
+  "cover": {
+    "base_tile_size_m": 20,
+    "min_tile_size_m": 10,
+    "max_tile_size_m": 20,
+    "min_edge_density": 0.08,
+    "tile_overlap_m": 0.5,
+    "black_pixel_threshold": 5,
+    "min_content_ratio": 0.05,
+    "canny_low": 30,
+    "canny_high": 90
+  }
+}

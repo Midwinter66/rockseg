@@ -33,9 +33,11 @@ sys.path.insert(0, str(PROJECT_ROOT))
 from experiments.common.pointcloud_index import PointCloudXYGridIndex
 from experiments.common.scene_reference import CURRENT_SCENE
 from experiments.common.stone_region import crop_stone_point_cloud
+from experiments.volume.ground_estimator import GroundDEM
 
 FUSION_ROOT = PROJECT_ROOT / "experiments" / "fusion" / "outputs"
 DETECTION_ROOT = PROJECT_ROOT / "experiments" / "detection" / "outputs"
+VOLUME_CONFIG_PATH = PROJECT_ROOT / "experiments" / "volume" / "config.json"
 
 SOURCES = ["sahi", "quadtree_dom"]
 METHODS = ["heuristic", "correlation_clustering"]
@@ -69,7 +71,8 @@ STONE_MASK_COLORS = np.asarray(
 ACCEPTED_COLOR = np.asarray([0.98, 0.82, 0.18], dtype=np.float32)
 REJECTED_COLOR = np.asarray([0.92, 0.12, 0.12], dtype=np.float32)
 LOCAL_CONTEXT_COLOR = np.asarray([0.62, 0.62, 0.66], dtype=np.float32)
-VIEWER_BACKGROUND = np.asarray([0.03, 0.03, 0.03], dtype=np.float64)
+VIEWER_BACKGROUND = np.asarray([1.0, 1.0, 1.0], dtype=np.float64)
+GROUND_DEM_GRID_COLOR = np.asarray([0.35, 0.35, 0.38], dtype=np.float64)
 
 _CACHED_FULL_SCENE_POINTS: np.ndarray | None = None
 _CACHED_FULL_SCENE_SOURCE_IDS: np.ndarray | None = None
@@ -356,6 +359,60 @@ def _build_scene_geometry(points: np.ndarray, colors: np.ndarray, display_origin
     return cloud
 
 
+def _build_local_ground_dem_grid(
+    points: np.ndarray,
+    local_points: np.ndarray,
+    display_origin: np.ndarray,
+):
+    """Build a local wireframe from the same GroundDEM configuration as volume."""
+    import open3d as o3d
+
+    config = _load_json(VOLUME_CONFIG_PATH)
+    dem_config = dict(config["ground_dem"])
+    ground_dem = GroundDEM(
+        points,
+        resolution=float(dem_config["resolution_m"]),
+        percentile=int(dem_config["percentile"]),
+        subsample_step=int(dem_config["subsample_step"]),
+        min_points_per_cell=int(dem_config["min_points_per_cell"]),
+    )
+    resolution = float(ground_dem.resolution)
+
+    x0 = np.floor(float(local_points[:, 0].min()) / resolution) * resolution
+    x1 = np.ceil(float(local_points[:, 0].max()) / resolution) * resolution
+    y0 = np.floor(float(local_points[:, 1].min()) / resolution) * resolution
+    y1 = np.ceil(float(local_points[:, 1].max()) / resolution) * resolution
+    x_values = np.arange(x0, x1 + resolution * 0.5, resolution)
+    y_values = np.arange(y0, y1 + resolution * 0.5, resolution)
+    xx, yy = np.meshgrid(x_values, y_values)
+    zz = ground_dem.get_ground_z(xx.ravel(), yy.ravel()).reshape(xx.shape)
+    valid = np.isfinite(zz)
+
+    vertices = np.column_stack((xx.ravel(), yy.ravel(), zz.ravel())) - display_origin
+    lines: list[list[int]] = []
+    ny, nx = valid.shape
+    for row in range(ny):
+        for col in range(nx):
+            current = row * nx + col
+            if not valid[row, col]:
+                continue
+            if col + 1 < nx and valid[row, col + 1]:
+                lines.append([current, current + 1])
+            if row + 1 < ny and valid[row + 1, col]:
+                lines.append([current, current + nx])
+
+    if not lines:
+        raise RuntimeError("GroundDEM has no drawable cells in the local point-cloud context.")
+
+    grid = o3d.geometry.LineSet()
+    grid.points = o3d.utility.Vector3dVector(vertices)
+    grid.lines = o3d.utility.Vector2iVector(np.asarray(lines, dtype=np.int32))
+    grid.colors = o3d.utility.Vector3dVector(
+        np.tile(GROUND_DEM_GRID_COLOR, (len(lines), 1))
+    )
+    return grid, dem_config
+
+
 def _sample_local_points(
     candidate_indices: np.ndarray,
     matched_mask: np.ndarray,
@@ -482,6 +539,7 @@ def _view_single_stone(
     stone_max_points: int,
     seed: int,
     context_mode: str,
+    show_ground_dem: bool,
 ) -> None:
     import open3d as o3d
 
@@ -513,7 +571,7 @@ def _view_single_stone(
     masked_points = candidate_points[matched_mask]
 
     display_origin = _compute_display_origin(candidate_points)
-    colors = _base_scene_colors(candidate_source_ids)
+    colors = np.tile(LOCAL_CONTEXT_COLOR, (len(candidate_source_ids), 1))
     is_rejected = bool(stone.get("validation_3d", {}).get("passed") is False)
     colors[matched_mask] = REJECTED_COLOR if is_rejected else ACCEPTED_COLOR
 
@@ -541,7 +599,24 @@ def _view_single_stone(
     if validation.get("reasons"):
         print(f"  reasons: {', '.join(validation['reasons'])}")
 
-    _open_viewer([cloud, bbox], f"Stone {stone.get('stone_id')}", point_size=1.5)
+    geometries = [cloud, bbox]
+    if show_ground_dem:
+        if context_mode != "raw":
+            raise ValueError("GroundDEM display requires --single-context raw to match the volume input.")
+        ground_grid, dem_config = _build_local_ground_dem_grid(
+            points,
+            candidate_points,
+            display_origin,
+        )
+        geometries.append(ground_grid)
+        print(
+            "  GroundDEM: "
+            f"{dem_config['resolution_m']:.2f} m grid, "
+            f"p{dem_config['percentile']}, "
+            f"subsample step {dem_config['subsample_step']}"
+        )
+
+    _open_viewer(geometries, f"Stone {stone.get('stone_id')}", point_size=1.5)
 
 
 def main() -> None:
@@ -559,6 +634,11 @@ def main() -> None:
     parser.add_argument("--chunk-size", type=int, default=2_000_000)
     parser.add_argument("--index-cell-size", type=float, default=1.0)
     parser.add_argument("--single-context", choices=SINGLE_CONTEXT_MODES, default="sampled")
+    parser.add_argument(
+        "--show-ground-dem",
+        action="store_true",
+        help="Display a local GroundDEM wireframe using the volume-stage configuration (raw context only).",
+    )
     parser.add_argument("--seed", type=int, default=42)
     args = parser.parse_args()
 
@@ -606,6 +686,7 @@ def main() -> None:
             stone_max_points=args.stone_max_points,
             seed=args.seed + args.stone_rank,
             context_mode=args.single_context,
+            show_ground_dem=args.show_ground_dem,
         )
         return
 

@@ -1,0 +1,54 @@
+{
+  "study_name": "Shape-Aware V2 2.5D Resolution Consistency Study",
+  "scope": "Representative-object benchmark only; no Dataset B rebuild, model retraining, production-code change, or real-scene batch run.",
+  "training_baseline": {
+    "dataset_grid_mm": 0.5,
+    "feature_count": 12,
+    "test_mape_percent": 5.8326,
+    "test_r2": 0.9845
+  },
+  "representative_samples": [
+    {"sample_id": "T01E143a", "dataset_id": "T01", "n_faces": 360368, "V_true": 2499.655745},
+    {"sample_id": "L01C010a", "dataset_id": "L01", "n_faces": 272256, "V_true": 1932.468736}
+  ],
+  "tested_grid_mm": [0.5, 1.0, 2.5, 5.0, 10.0, 25.0, 50.0],
+  "records_file": "resolution_results.csv",
+  "benchmark_summary": {
+    "valid_surface_at_0_5_to_10_mm": true,
+    "both_representative_meshes_empty_at_25_mm": true,
+    "both_representative_meshes_empty_at_50_mm": true,
+    "all_valid_surfaces_have_12_finite_features": true,
+    "surface_time_range_seconds": [3.120019, 4.401921],
+    "timing_interpretation": "For this face-by-face rasterizer, representative timings are dominated by face traversal; they do not establish that coarser grids are materially cheaper."
+  },
+  "feature_change_examples": {
+    "T01E143a": {
+      "H_skew_norm": {"0.5_mm": -0.183066, "5_mm": 0.311053, "10_mm": 0.704388},
+      "C": {"0.5_mm": 0.889113, "5_mm": 1.0, "10_mm": 1.0},
+      "AR": {"0.5_mm": 1.692308, "5_mm": 2.0, "10_mm": 3.0},
+      "fill_ratio": {"0.5_mm": 0.446629, "5_mm": 0.625941, "10_mm": 0.774003}
+    },
+    "L01C010a": {
+      "H_std_norm": {"0.5_mm": 0.212403, "5_mm": 0.262653, "10_mm": 0.001046},
+      "H_skew_norm": {"0.5_mm": -0.175954, "5_mm": -0.318843, "10_mm": 0.0},
+      "C": {"0.5_mm": 0.934979, "5_mm": 1.0, "10_mm": 1.0},
+      "fill_ratio": {"0.5_mm": 0.429353, "5_mm": 0.525712, "10_mm": 0.998954}
+    }
+  },
+  "model_performance_by_resolution": {
+    "0.5_mm": "Existing Dataset B test result: MAPE 5.8326%, R2 0.9845.",
+    "1_to_50_mm": "NOT AVAILABLE. A valid Test MAPE/RMSE/R2 comparison requires resolution-matched feature generation for all fixed-split samples and model training/selection at each resolution. This was intentionally not run after the representative benchmark demonstrated feature degeneration and empty surfaces at 25/50 mm."
+  },
+  "production_scale_context": {
+    "DOM_pixel_size_mm": 10.0,
+    "current_production_grid_mm": 50.0,
+    "point_cloud_spacing": "NOT AVAILABLE from the limited existing metadata search; no full point-cloud processing was performed."
+  },
+  "conclusions": {
+    "resolution_robustness": "Not demonstrated. The same objects show material feature changes by 5-10 mm, and 25/50 mm return no surface with the training rasterizer.",
+    "recommended_candidate_grid_mm": 10.0,
+    "candidate_qualification": "10 mm is a scale-matched candidate for a future controlled production study because it matches the known DOM pixel size. It is not a final recommendation until point-cloud spacing and resolution-matched validation are established.",
+    "existing_v2_direct_production_use": "Not supported. The 0.5 mm-trained model must not be applied to 10 mm or 50 mm descriptors without resolution-matched validation/training.",
+    "next_model_strategy": "Build a new fixed-split, resolution-matched dataset at a production-supported resolution (initial candidate 10 mm) and train a new model; subsequently evaluate multi-resolution training only if it improves cross-resolution stability."
+  }
+}

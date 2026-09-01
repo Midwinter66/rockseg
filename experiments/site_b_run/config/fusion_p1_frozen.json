@@ -1,0 +1,34 @@
+{
+  "method": "correlation_clustering",
+  "correlation": {
+    "max_distance_m": 3.5,
+    "distance_sigma": 0.7,
+    "positive_weight_threshold": 0.45,
+    "use_iou": true,
+    "iou_weight": 0.3,
+    "require_bbox_intersect": true,
+    "min_pair_iou": 0.15,
+    "enforce_one_detection_per_tile": true,
+    "spatial_index_cell_m": 1.0
+  },
+  "validation_3d": {
+    "enabled": true,
+    "ground_dem": {
+      "resolution_m": 0.5,
+      "percentile": 5,
+      "subsample_step": 100,
+      "min_points_per_cell": 3
+    },
+    "crop": {
+      "bbox_pad_m": 0.5,
+      "index_cell_size_m": 1.0
+    },
+    "filter": {
+      "min_points": 60,
+      "min_z_range_m": 0.18,
+      "elevated_height_m": 0.08,
+      "min_p90_height_m": 0.12,
+      "min_elevated_ratio": 0.2
+    }
+  }
+}

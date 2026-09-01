@@ -1,0 +1,140 @@
+{
+  "model_name": "shape_aware_model_v2_scaled_10mm",
+  "evaluated_at": "2026-08-26T19:10:30",
+  "dataset_name": "t01_l01_v2_shape_aware_10mm",
+  "dataset_directory": "research_v2/volume_validation/datasets/t01_l01_scaled_10mm",
+  "target_definition": "y_ratio = V_true / V_2_5D",
+  "best_iteration": 356,
+  "split_counts": {
+    "train": 326,
+    "validation": 70,
+    "test": 69
+  },
+  "training_ratio_metrics": {
+    "mae": 0.022773494430712228,
+    "rmse": 0.029541016563865777,
+    "mape": 3.534906521060345,
+    "r2": 0.7576066047558235,
+    "n_samples": 326
+  },
+  "validation_ratio_metrics": {
+    "mae": 0.04553969125176036,
+    "rmse": 0.056288884154542175,
+    "mape": 7.311566313222503,
+    "r2": 0.41742316231715526,
+    "n_samples": 70
+  },
+  "test_ratio_metrics": {
+    "mae": 0.03739561779014941,
+    "rmse": 0.0450636561031915,
+    "mape": 5.823076769898146,
+    "r2": 0.3279749441652313,
+    "n_samples": 69
+  },
+  "test_volume_metrics": {
+    "raw_2_5D": {
+      "mae": 59903925.011354834,
+      "rmse": 84139844.69410066,
+      "mape": 54.23849191798668,
+      "smape": 42.253272296763654,
+      "median_rel_error": 52.97916174110977,
+      "r2": 0.18946448534243732,
+      "mean_rel_error": 54.23849191798668,
+      "n_samples": 69
+    },
+    "constant_correction": {
+      "mae": 8723245.416057525,
+      "rmse": 16049133.277032183,
+      "mape": 6.986407966598169,
+      "smape": 6.900288599971402,
+      "median_rel_error": 5.764286416988167,
+      "r2": 0.9705102015854082,
+      "mean_rel_error": 6.986407966598169,
+      "n_samples": 69
+    },
+    "shape_aware_v2_corrected": {
+      "mae": 7167710.639666832,
+      "rmse": 11890779.859332634,
+      "mape": 5.8230767699073,
+      "smape": 5.780346937197994,
+      "median_rel_error": 5.323090498575092,
+      "r2": 0.9838121446742769,
+      "mean_rel_error": 5.8230767699073,
+      "n_samples": 69
+    }
+  },
+  "constant_correction_ratio_train_mean": 0.6553548453128322,
+  "feature_importance": {
+    "split": {
+      "C": 141,
+      "AR": 213,
+      "solidity": 389,
+      "compactness": 132,
+      "eq_diam_ratio": 407,
+      "H_mean_norm": 254,
+      "H_std_norm": 486,
+      "H_p25_norm": 224,
+      "H_p75_norm": 456,
+      "H_skew_norm": 524,
+      "fill_ratio": 320,
+      "ellipsoid_ratio": 30
+    },
+    "gain": {
+      "C": 0.5306377063243417,
+      "AR": 0.5893418329651468,
+      "solidity": 1.0079192806661013,
+      "compactness": 0.28124156093690544,
+      "eq_diam_ratio": 1.1325955892825732,
+      "H_mean_norm": 0.8924233743382501,
+      "H_std_norm": 8.647573956855922,
+      "H_p25_norm": 0.8958622725913301,
+      "H_p75_norm": 0.753969275894633,
+      "H_skew_norm": 1.5199097301083384,
+      "fill_ratio": 0.7405268118964159,
+      "ellipsoid_ratio": 0.08549787430092692
+    }
+  },
+  "data_quality": {
+    "feature_count": 12,
+    "feature_order_matches": true,
+    "nan_count": 0,
+    "inf_count": 0,
+    "non_positive_V_true": 0,
+    "non_positive_V_2_5D": 0,
+    "non_positive_y_ratio": 0,
+    "split_overlaps": {
+      "train_validation": 0,
+      "train_test": 0,
+      "validation_test": 0
+    },
+    "passed": true
+  },
+  "id_checks": {
+    "all_dataset_original_obj_keys_unique": true,
+    "test_sample_count_is_69": true,
+    "test_dataset_original_obj_keys_unique": true
+  },
+  "prediction_checks": {
+    "test_prediction_count": 69,
+    "test_prediction_finite": true,
+    "test_prediction_nonfinite_count": 0,
+    "test_prediction_nonpositive_count": 0,
+    "test_volume_prediction_finite": true,
+    "test_volume_prediction_positive": true,
+    "formula_max_abs_difference": 0.0
+  },
+  "test_prediction_summary": {
+    "min": 0.5711148138803616,
+    "median": 0.6632253451222518,
+    "max": 0.7262379983944951,
+    "mean": 0.6537115774164356
+  },
+  "test_error_summary": {
+    "relative_error_min": 0.0002661761074258548,
+    "relative_error_median": 0.05323090498575092,
+    "relative_error_p90": 0.10995842658970595,
+    "relative_error_max": 0.163297357542845
+  },
+  "final_status": "PASS",
+  "final_reason": "Corrected test MAE and MAPE are each at least 10% lower than raw 2.5D."
+}

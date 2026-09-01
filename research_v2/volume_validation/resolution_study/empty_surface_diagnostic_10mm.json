@@ -1,0 +1,442 @@
+{
+  "purpose": "Diagnose empty 10 mm mesh surfaces without changing rasterization or datasets.",
+  "sample_selection": "First 3 cached empty and first 3 cached successful samples from each of T01 and L01.",
+  "sample_count": 12,
+  "empty_at_10mm": 6,
+  "empty_at_10mm_recovered_at_5mm": 6,
+  "interpretation": "The current rasterizer accepts a face only when a grid-cell centre falls inside its XY projection. At coarse grids, sub-cell triangles can therefore leave no accepted cell even for a non-empty mesh.",
+  "samples": [
+    {
+      "sample_id": "T01F005a",
+      "dataset_id": "T01",
+      "cached_10mm_status": "error",
+      "cached_10mm_error": "empty_2_5d_surface",
+      "mesh": {
+        "face_count": 30168,
+        "edge_length_mm": {
+          "p50": 0.09923802315881702,
+          "p90": 0.15291039406135862
+        },
+        "xy_triangle_span_mm": {
+          "p50": 0.09180300000000008,
+          "p90": 0.14064399999999994
+        },
+        "projected_area_mm2": {
+          "p50": 0.002963467369,
+          "p90": 0.006663251211000008
+        },
+        "face_area_below_10mm_cell_ratio": 1.0
+      },
+      "surfaces": {
+        "2.5mm": {
+          "status": "ok",
+          "valid_cells": 7
+        },
+        "5mm": {
+          "status": "ok",
+          "valid_cells": 1
+        },
+        "10mm": {
+          "status": "empty",
+          "valid_cells": 0
+        }
+      }
+    },
+    {
+      "sample_id": "T01F011a",
+      "dataset_id": "T01",
+      "cached_10mm_status": "error",
+      "cached_10mm_error": "empty_2_5d_surface",
+      "mesh": {
+        "face_count": 86954,
+        "edge_length_mm": {
+          "p50": 0.09242825569056233,
+          "p90": 0.1512041416529323
+        },
+        "xy_triangle_span_mm": {
+          "p50": 0.08815500000000043,
+          "p90": 0.14406860000000013
+        },
+        "projected_area_mm2": {
+          "p50": 0.0026282003259999994,
+          "p90": 0.0062829135588999925
+        },
+        "face_area_below_10mm_cell_ratio": 1.0
+      },
+      "surfaces": {
+        "2.5mm": {
+          "status": "ok",
+          "valid_cells": 18
+        },
+        "5mm": {
+          "status": "ok",
+          "valid_cells": 5
+        },
+        "10mm": {
+          "status": "empty",
+          "valid_cells": 0
+        }
+      }
+    },
+    {
+      "sample_id": "T01F012a",
+      "dataset_id": "T01",
+      "cached_10mm_status": "error",
+      "cached_10mm_error": "empty_2_5d_surface",
+      "mesh": {
+        "face_count": 59172,
+        "edge_length_mm": {
+          "p50": 0.09550292992853002,
+          "p90": 0.14902112762263273
+        },
+        "xy_triangle_span_mm": {
+          "p50": 0.09031250000000007,
+          "p90": 0.1410859999999996
+        },
+        "projected_area_mm2": {
+          "p50": 0.0027079733515000004,
+          "p90": 0.006532250573149993
+        },
+        "face_area_below_10mm_cell_ratio": 1.0
+      },
+      "surfaces": {
+        "2.5mm": {
+          "status": "ok",
+          "valid_cells": 14
+        },
+        "5mm": {
+          "status": "ok",
+          "valid_cells": 2
+        },
+        "10mm": {
+          "status": "empty",
+          "valid_cells": 0
+        }
+      }
+    },
+    {
+      "sample_id": "T01E143a",
+      "dataset_id": "T01",
+      "cached_10mm_status": "success",
+      "cached_10mm_error": "",
+      "mesh": {
+        "face_count": 360368,
+        "edge_length_mm": {
+          "p50": 0.08627343487997852,
+          "p90": 0.13191394978924625
+        },
+        "xy_triangle_span_mm": {
+          "p50": 0.08426500000000026,
+          "p90": 0.12675149999999968
+        },
+        "projected_area_mm2": {
+          "p50": 0.0022291639007499886,
+          "p90": 0.00526251522450001
+        },
+        "face_area_below_10mm_cell_ratio": 1.0
+      },
+      "surfaces": {
+        "2.5mm": {
+          "status": "ok",
+          "valid_cells": 67
+        },
+        "5mm": {
+          "status": "ok",
+          "valid_cells": 16
+        },
+        "10mm": {
+          "status": "ok",
+          "valid_cells": 3
+        }
+      }
+    },
+    {
+      "sample_id": "T01E144a",
+      "dataset_id": "T01",
+      "cached_10mm_status": "success",
+      "cached_10mm_error": "",
+      "mesh": {
+        "face_count": 758380,
+        "edge_length_mm": {
+          "p50": 0.08273649557176888,
+          "p90": 0.1297115264939745
+        },
+        "xy_triangle_span_mm": {
+          "p50": 0.08120049999999956,
+          "p90": 0.12345999999999968
+        },
+        "projected_area_mm2": {
+          "p50": 0.0019951346405000015,
+          "p90": 0.004890127401550023
+        },
+        "face_area_below_10mm_cell_ratio": 1.0
+      },
+      "surfaces": {
+        "2.5mm": {
+          "status": "ok",
+          "valid_cells": 122
+        },
+        "5mm": {
+          "status": "ok",
+          "valid_cells": 30
+        },
+        "10mm": {
+          "status": "ok",
+          "valid_cells": 7
+        }
+      }
+    },
+    {
+      "sample_id": "T01F000a",
+      "dataset_id": "T01",
+      "cached_10mm_status": "success",
+      "cached_10mm_error": "",
+      "mesh": {
+        "face_count": 160058,
+        "edge_length_mm": {
+          "p50": 0.10539830735832496,
+          "p90": 0.15561310180379856
+        },
+        "xy_triangle_span_mm": {
+          "p50": 0.09913349999999976,
+          "p90": 0.14702800000000016
+        },
+        "projected_area_mm2": {
+          "p50": 0.0030430854610000173,
+          "p90": 0.007140804852049984
+        },
+        "face_area_below_10mm_cell_ratio": 1.0
+      },
+      "surfaces": {
+        "2.5mm": {
+          "status": "ok",
+          "valid_cells": 44
+        },
+        "5mm": {
+          "status": "ok",
+          "valid_cells": 9
+        },
+        "10mm": {
+          "status": "ok",
+          "valid_cells": 2
+        }
+      }
+    },
+    {
+      "sample_id": "L01C027a",
+      "dataset_id": "L01",
+      "cached_10mm_status": "error",
+      "cached_10mm_error": "empty_2_5d_surface",
+      "mesh": {
+        "face_count": 119618,
+        "edge_length_mm": {
+          "p50": 0.09089799510440252,
+          "p90": 0.1348744287307063
+        },
+        "xy_triangle_span_mm": {
+          "p50": 0.08197399999999987,
+          "p90": 0.12445000000000017
+        },
+        "projected_area_mm2": {
+          "p50": 0.0022688004739999986,
+          "p90": 0.005159005891450015
+        },
+        "face_area_below_10mm_cell_ratio": 1.0
+      },
+      "surfaces": {
+        "2.5mm": {
+          "status": "ok",
+          "valid_cells": 23
+        },
+        "5mm": {
+          "status": "ok",
+          "valid_cells": 5
+        },
+        "10mm": {
+          "status": "empty",
+          "valid_cells": 0
+        }
+      }
+    },
+    {
+      "sample_id": "L01C031a",
+      "dataset_id": "L01",
+      "cached_10mm_status": "error",
+      "cached_10mm_error": "empty_2_5d_surface",
+      "mesh": {
+        "face_count": 100076,
+        "edge_length_mm": {
+          "p50": 0.08773775585224355,
+          "p90": 0.13267215470474547
+        },
+        "xy_triangle_span_mm": {
+          "p50": 0.08039599999999991,
+          "p90": 0.1255067999999998
+        },
+        "projected_area_mm2": {
+          "p50": 0.002065812682749982,
+          "p90": 0.005096838932250002
+        },
+        "face_area_below_10mm_cell_ratio": 1.0
+      },
+      "surfaces": {
+        "2.5mm": {
+          "status": "ok",
+          "valid_cells": 18
+        },
+        "5mm": {
+          "status": "ok",
+          "valid_cells": 3
+        },
+        "10mm": {
+          "status": "empty",
+          "valid_cells": 0
+        }
+      }
+    },
+    {
+      "sample_id": "L01C035a",
+      "dataset_id": "L01",
+      "cached_10mm_status": "error",
+      "cached_10mm_error": "empty_2_5d_surface",
+      "mesh": {
+        "face_count": 88494,
+        "edge_length_mm": {
+          "p50": 0.08857884799995981,
+          "p90": 0.13409065997301978
+        },
+        "xy_triangle_span_mm": {
+          "p50": 0.08526600000000017,
+          "p90": 0.12909399999999982
+        },
+        "projected_area_mm2": {
+          "p50": 0.0024012318007499943,
+          "p90": 0.005420552269349996
+        },
+        "face_area_below_10mm_cell_ratio": 1.0
+      },
+      "surfaces": {
+        "2.5mm": {
+          "status": "ok",
+          "valid_cells": 19
+        },
+        "5mm": {
+          "status": "ok",
+          "valid_cells": 3
+        },
+        "10mm": {
+          "status": "empty",
+          "valid_cells": 0
+        }
+      }
+    },
+    {
+      "sample_id": "L01C010a",
+      "dataset_id": "L01",
+      "cached_10mm_status": "success",
+      "cached_10mm_error": "",
+      "mesh": {
+        "face_count": 272256,
+        "edge_length_mm": {
+          "p50": 0.09033001127809007,
+          "p90": 0.13815717290463056
+        },
+        "xy_triangle_span_mm": {
+          "p50": 0.0817489999999994,
+          "p90": 0.13066900000000095
+        },
+        "projected_area_mm2": {
+          "p50": 0.0022054168005000126,
+          "p90": 0.005757064438500011
+        },
+        "face_area_below_10mm_cell_ratio": 1.0
+      },
+      "surfaces": {
+        "2.5mm": {
+          "status": "ok",
+          "valid_cells": 53
+        },
+        "5mm": {
+          "status": "ok",
+          "valid_cells": 13
+        },
+        "10mm": {
+          "status": "ok",
+          "valid_cells": 2
+        }
+      }
+    },
+    {
+      "sample_id": "L01C012a",
+      "dataset_id": "L01",
+      "cached_10mm_status": "success",
+      "cached_10mm_error": "",
+      "mesh": {
+        "face_count": 207134,
+        "edge_length_mm": {
+          "p50": 0.08826598758865181,
+          "p90": 0.13428599982500006
+        },
+        "xy_triangle_span_mm": {
+          "p50": 0.08411850000000004,
+          "p90": 0.13100299999999976
+        },
+        "projected_area_mm2": {
+          "p50": 0.002366179348250005,
+          "p90": 0.005170617449399982
+        },
+        "face_area_below_10mm_cell_ratio": 1.0
+      },
+      "surfaces": {
+        "2.5mm": {
+          "status": "ok",
+          "valid_cells": 39
+        },
+        "5mm": {
+          "status": "ok",
+          "valid_cells": 9
+        },
+        "10mm": {
+          "status": "ok",
+          "valid_cells": 2
+        }
+      }
+    },
+    {
+      "sample_id": "L01C014a",
+      "dataset_id": "L01",
+      "cached_10mm_status": "success",
+      "cached_10mm_error": "",
+      "mesh": {
+        "face_count": 370434,
+        "edge_length_mm": {
+          "p50": 0.09177945456909231,
+          "p90": 0.13886996366745427
+        },
+        "xy_triangle_span_mm": {
+          "p50": 0.08363399999999999,
+          "p90": 0.1286290000000001
+        },
+        "projected_area_mm2": {
+          "p50": 0.002342315179499975,
+          "p90": 0.005902061525400012
+        },
+        "face_area_below_10mm_cell_ratio": 1.0
+      },
+      "surfaces": {
+        "2.5mm": {
+          "status": "ok",
+          "valid_cells": 77
+        },
+        "5mm": {
+          "status": "ok",
+          "valid_cells": 18
+        },
+        "10mm": {
+          "status": "ok",
+          "valid_cells": 3
+        }
+      }
+    }
+  ]
+}

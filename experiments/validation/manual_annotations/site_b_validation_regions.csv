@@ -1,0 +1,4 @@
+﻿site_id,region_id,x_min,y_min,x_max,y_max,scene_type,ignore,notes
+site_b,SITE_B_R01,623444.8202,4678634.8969,623459.8202,4678649.8969,dense_pile,0,Auto-selected draft window; review all rocks >= 0.5 m. Prediction count in window: 273
+site_b,SITE_B_R02,623421.9358,4678679.0785,623436.9358,4678694.0785,sparse_pile,0,Auto-selected draft window; review all rocks >= 0.5 m. Prediction count in window: 38
+site_b,SITE_B_R03,623484.9506,4678546.965,623499.9506,4678561.965,edge_or_boundary,0,Auto-selected draft window; review all rocks >= 0.5 m. Prediction count in window: 103

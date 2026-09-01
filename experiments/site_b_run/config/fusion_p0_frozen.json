@@ -1,0 +1,17 @@
+{
+  "method": "correlation_clustering",
+  "correlation": {
+    "max_distance_m": 3.5,
+    "distance_sigma": 0.7,
+    "positive_weight_threshold": 0.45,
+    "use_iou": true,
+    "iou_weight": 0.3,
+    "require_bbox_intersect": true,
+    "min_pair_iou": 0.15,
+    "enforce_one_detection_per_tile": true,
+    "spatial_index_cell_m": 1.0
+  },
+  "validation_3d": {
+    "enabled": false
+  }
+}

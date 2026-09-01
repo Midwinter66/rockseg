@@ -1,0 +1,10 @@
+{
+  "inference": {
+    "imgsz": 1024,
+    "conf": 0.35,
+    "max_det": 1000,
+    "device": 0,
+    "min_stone_diameter_m": 0.5,
+    "multi_scale_iou_threshold": 0.5
+  }
+}

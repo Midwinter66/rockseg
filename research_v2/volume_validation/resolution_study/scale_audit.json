@@ -1,0 +1,349 @@
+{
+  "study_name": "External OBJ Scale Audit for 10 mm Shape-Aware V2",
+  "scope": "Cache-derived 0.5 mm footprint statistics, OBJ vertex bounding boxes, existing Site B equivalent-diameter statistics, and six scaled 10 mm feasibility surfaces.",
+  "external_obj_units": {
+    "status": "NOT_VERIFIED",
+    "evidence": "No shapeList.txt, unit metadata, or source documentation was found under data/experience_rock.",
+    "interpretation": "OBJ coordinate values follow the existing builder's millimetre convention but are not independently physically calibrated."
+  },
+  "external_distributions_mm": {
+    "T01": {
+      "bbox_x_mm": {
+        "count": 79,
+        "min": 7.364016,
+        "p25": 10.576426,
+        "median": 12.800061,
+        "p75": 15.553382500000001,
+        "p90": 19.001490200000003,
+        "max": 36.004738,
+        "mean": 13.982456037974682
+      },
+      "bbox_y_mm": {
+        "count": 79,
+        "min": 5.500077,
+        "p25": 7.403167,
+        "median": 8.571316,
+        "p75": 11.0091865,
+        "p90": 14.067755199999999,
+        "max": 30.874304000000002,
+        "mean": 9.741502253164558
+      },
+      "bbox_z_mm": {
+        "count": 79,
+        "min": 3.836121,
+        "p25": 4.8019549999999995,
+        "median": 5.692277000000001,
+        "p75": 6.6507625,
+        "p90": 8.881063200000002,
+        "max": 20.111311,
+        "mean": 6.187497481012659
+      },
+      "bbox_max_mm": {
+        "count": 79,
+        "min": 7.364016,
+        "p25": 10.576426,
+        "median": 12.800061,
+        "p75": 15.553382500000001,
+        "p90": 19.001490200000003,
+        "max": 36.004738,
+        "mean": 13.990932291139238
+      },
+      "footprint_eq_diameter_mm": {
+        "count": 79,
+        "min": 5.890312181373172,
+        "p25": 8.106983839157177,
+        "median": 9.657370069115643,
+        "p75": 12.027871732413551,
+        "p90": 14.342992013968914,
+        "max": 30.855548440689205,
+        "mean": 10.657260647177825
+      },
+      "footprint_L_mm": {
+        "count": 79,
+        "min": 7.0,
+        "p25": 10.5,
+        "median": 12.5,
+        "p75": 15.25,
+        "p90": 18.700000000000003,
+        "max": 36.0,
+        "mean": 13.677215189873417
+      },
+      "footprint_W_mm": {
+        "count": 79,
+        "min": 5.0,
+        "p25": 7.0,
+        "median": 8.5,
+        "p75": 10.75,
+        "p90": 13.999999999999998,
+        "max": 30.5,
+        "mean": 9.474683544303797
+      },
+      "height_H_mm": {
+        "count": 79,
+        "min": 3.761620875052375,
+        "p25": 4.671593167375704,
+        "median": 5.633156827888928,
+        "p75": 6.603341002294229,
+        "p90": 8.762098517497352,
+        "max": 20.03755570606085,
+        "mean": 6.117080422174272
+      }
+    },
+    "L01": {
+      "bbox_x_mm": {
+        "count": 386,
+        "min": 6.095885,
+        "p25": 8.432556250000001,
+        "median": 9.7312215,
+        "p75": 11.737319,
+        "p90": 14.8611225,
+        "max": 34.621218,
+        "mean": 10.722315277202075
+      },
+      "bbox_y_mm": {
+        "count": 386,
+        "min": 4.4421870000000006,
+        "p25": 6.208078499999999,
+        "median": 7.086708999999999,
+        "p75": 8.46211375,
+        "p90": 11.298417500000001,
+        "max": 22.449149,
+        "mean": 7.816981207253886
+      },
+      "bbox_z_mm": {
+        "count": 386,
+        "min": 2.6474080000000004,
+        "p25": 4.19824725,
+        "median": 4.868658,
+        "p75": 6.0964295,
+        "p90": 8.1741205,
+        "max": 14.459986,
+        "mean": 5.482210582901554
+      },
+      "bbox_max_mm": {
+        "count": 386,
+        "min": 6.095885,
+        "p25": 8.432556250000001,
+        "median": 9.7312215,
+        "p75": 11.737319,
+        "p90": 14.8611225,
+        "max": 34.621218,
+        "mean": 10.726998533678756
+      },
+      "footprint_eq_diameter_mm": {
+        "count": 386,
+        "min": 5.4700209598571305,
+        "p25": 6.681530912840788,
+        "median": 7.715176518808164,
+        "p75": 9.053428271183892,
+        "p90": 12.100511338362356,
+        "max": 25.180812005932435,
+        "mean": 8.481401452868521
+      },
+      "footprint_L_mm": {
+        "count": 386,
+        "min": 6.0,
+        "p25": 8.0,
+        "median": 9.5,
+        "p75": 11.5,
+        "p90": 14.5,
+        "max": 34.5,
+        "mean": 10.441709844559586
+      },
+      "footprint_W_mm": {
+        "count": 386,
+        "min": 4.0,
+        "p25": 6.0,
+        "median": 6.999999999999999,
+        "p75": 8.0,
+        "p90": 11.0,
+        "max": 22.0,
+        "mean": 7.541450777202073
+      },
+      "height_H_mm": {
+        "count": 386,
+        "min": 2.5911575570157668,
+        "p25": 4.153936316456592,
+        "median": 4.832202386572243,
+        "p75": 6.046853566887222,
+        "p90": 8.097204065193782,
+        "max": 14.408488333678976,
+        "mean": 5.425162703205934
+      }
+    }
+  },
+  "combined_external_footprint_eq_diameter_mm": {
+    "count": 465,
+    "min": 5.4700209598571305,
+    "p25": 6.863662517577698,
+    "median": 7.958873497585845,
+    "p75": 9.440697438826296,
+    "p90": 12.756169656964422,
+    "max": 30.855548440689205,
+    "mean": 8.851063552546877
+  },
+  "mine_site_b_equivalent_diameter_mm": {
+    "count": 8538,
+    "min": 500.09999999999997,
+    "max": 3346.2999999999997,
+    "mean": 748.1999999999999,
+    "median": 658.5,
+    "std": 279.5,
+    "p25": 565.3000000000001,
+    "p75": 823.9,
+    "sum": 6387983.5
+  },
+  "scale_mapping": {
+    "rule": "s = SiteB_median_equivalent_diameter_mm / external_combined_median_0.5mm_footprint_equivalent_diameter_mm",
+    "source": "Existing Site B volume_stats.json only; no true volume or test information was used.",
+    "recommended_uniform_scale_factor": 82.73783974575572,
+    "target_median_equivalent_diameter_mm": 658.5,
+    "external_median_footprint_eq_diameter_mm": 7.958873497585845,
+    "scaled_external_eq_diameter_mm": {
+      "count": 465,
+      "min": 452.57771758258417,
+      "p25": 567.8846094482939,
+      "median": 658.5,
+      "p75": 781.1029117817766,
+      "p90": 1055.4179208475941,
+      "max": 2552.921422153146,
+      "mean": 732.3178777901228
+    }
+  },
+  "theoretical_scale_effects": {
+    "continuous_similarity_invariants": [
+      "C",
+      "AR",
+      "solidity",
+      "compactness",
+      "eq_diam_ratio",
+      "H_mean_norm",
+      "H_std_norm",
+      "H_p25_norm",
+      "H_p75_norm",
+      "H_skew_norm",
+      "fill_ratio",
+      "ellipsoid_ratio"
+    ],
+    "rasterization_caveat": "At fixed 10 mm grid, all 12 values can change through discretization. Height-normalized and volume-ratio features are scale-invariant only for sufficiently resolved geometrically similar surfaces.",
+    "target_ratio_caveat": "V_true/V_2_5D is invariant under geometric scaling only in the continuum limit; fixed-grid sampling makes it resolution-dependent."
+  },
+  "feasibility_benchmark": [
+    {
+      "dataset_id": "T01",
+      "selection_percentile": 25,
+      "sample_id": "T01F050a",
+      "original_footprint_eq_diameter_mm": 8.018640596081465,
+      "scaled_footprint_eq_diameter_mm": 663.4450006173994,
+      "scale_factor": 82.73783974575572,
+      "scaled_10mm": {
+        "surface_status": "ok",
+        "occupied_cells": 3440,
+        "footprint_L_mm": 680.0,
+        "footprint_W_mm": 680.0,
+        "H_mean_mm": 476.9109409907144,
+        "H_std_mm": 95.24957043596092,
+        "H_max_mm": 639.0550932549554,
+        "features_finite": true
+      }
+    },
+    {
+      "dataset_id": "T01",
+      "selection_percentile": 50,
+      "sample_id": "T01F046a",
+      "original_footprint_eq_diameter_mm": 9.657370069115643,
+      "scaled_footprint_eq_diameter_mm": 799.0299371439479,
+      "scale_factor": 82.73783974575572,
+      "scaled_10mm": {
+        "surface_status": "ok",
+        "occupied_cells": 5031,
+        "footprint_L_mm": 1260.0,
+        "footprint_W_mm": 600.0,
+        "H_mean_mm": 292.98769323514233,
+        "H_std_mm": 61.68279946498925,
+        "H_max_mm": 416.4013071670658,
+        "features_finite": true
+      }
+    },
+    {
+      "dataset_id": "T01",
+      "selection_percentile": 75,
+      "sample_id": "T01F025a",
+      "original_footprint_eq_diameter_mm": 12.074184356393443,
+      "scaled_footprint_eq_diameter_mm": 998.9919303399914,
+      "scale_factor": 82.73783974575572,
+      "scaled_10mm": {
+        "surface_status": "ok",
+        "occupied_cells": 7853,
+        "footprint_L_mm": 1130.0,
+        "footprint_W_mm": 970.0,
+        "H_mean_mm": 406.8764523310328,
+        "H_std_mm": 78.72437467445438,
+        "H_max_mm": 551.0493389874081,
+        "features_finite": true
+      }
+    },
+    {
+      "dataset_id": "L01",
+      "selection_percentile": 25,
+      "sample_id": "L01E025a",
+      "original_footprint_eq_diameter_mm": 6.6755811781245455,
+      "scaled_footprint_eq_diameter_mm": 552.3231657254519,
+      "scale_factor": 82.73783974575572,
+      "scaled_10mm": {
+        "surface_status": "ok",
+        "occupied_cells": 2418,
+        "footprint_L_mm": 570.0,
+        "footprint_W_mm": 560.0,
+        "H_mean_mm": 351.66809057506646,
+        "H_std_mm": 86.0334564914642,
+        "H_max_mm": 498.2847865362273,
+        "features_finite": true
+      }
+    },
+    {
+      "dataset_id": "L01",
+      "selection_percentile": 50,
+      "sample_id": "L01D097a",
+      "original_footprint_eq_diameter_mm": 7.715176518808164,
+      "scaled_footprint_eq_diameter_mm": 638.3370384233674,
+      "scale_factor": 82.73783974575572,
+      "scaled_10mm": {
+        "surface_status": "ok",
+        "occupied_cells": 3189,
+        "footprint_L_mm": 880.0,
+        "footprint_W_mm": 470.0,
+        "H_mean_mm": 230.01450126897805,
+        "H_std_mm": 53.64629060804416,
+        "H_max_mm": 343.9872197425392,
+        "features_finite": true
+      }
+    },
+    {
+      "dataset_id": "L01",
+      "selection_percentile": 75,
+      "sample_id": "L01D047a",
+      "original_footprint_eq_diameter_mm": 9.062226582657155,
+      "scaled_footprint_eq_diameter_mm": 749.7890507356152,
+      "scale_factor": 82.73783974575572,
+      "scaled_10mm": {
+        "surface_status": "ok",
+        "occupied_cells": 4465,
+        "footprint_L_mm": 970.0,
+        "footprint_W_mm": 630.0,
+        "H_mean_mm": 400.3234224770575,
+        "H_std_mm": 79.113242226674,
+        "H_max_mm": 505.6933572349182,
+        "features_finite": true
+      }
+    }
+  ],
+  "conclusion": "SCALE_ADAPTATION_PLAUSIBLE_BUT_NOT_PROVEN",
+  "decision": {
+    "keep_0_5mm_model": true,
+    "use_current_63_sample_10mm_dataset_for_training": false,
+    "allow_full_10mm_dataset_rebuild_now": false,
+    "reason": "The six-object test establishes non-empty, well-resolved surfaces but does not validate the geometric-similarity domain adaptation or 10 mm correction accuracy.",
+    "next_allowed_action": "Pre-register the uniform scale rule, then build a limited pilot split under original_obj_id grouping before any full dataset or model training."
+  }
+}

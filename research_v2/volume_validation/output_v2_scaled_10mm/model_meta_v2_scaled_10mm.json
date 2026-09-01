@@ -1,0 +1,72 @@
+{
+  "model_name": "shape_aware_model_v2_scaled_10mm",
+  "created_at": "2026-08-26T19:10:30",
+  "model_file": "shape_aware_model_v2_scaled_10mm.txt",
+  "dataset_name": "t01_l01_v2_shape_aware_10mm",
+  "dataset_directory": "research_v2/volume_validation/datasets/t01_l01_scaled_10mm",
+  "dataset_constructed_at": "2026-08-26T19:05:03",
+  "feature_order": [
+    "C",
+    "AR",
+    "solidity",
+    "compactness",
+    "eq_diam_ratio",
+    "H_mean_norm",
+    "H_std_norm",
+    "H_p25_norm",
+    "H_p75_norm",
+    "H_skew_norm",
+    "fill_ratio",
+    "ellipsoid_ratio"
+  ],
+  "n_features": 12,
+  "target_definition": "y_ratio = V_true / V_2_5D",
+  "grid_res_mm": 10.0,
+  "grid_resolution_m": 0.01,
+  "scale_factor": 82.73784,
+  "dataset_id_counts": {
+    "T01": {
+      "total": 79,
+      "success": 79,
+      "error": 0
+    },
+    "L01": {
+      "total": 386,
+      "success": 386,
+      "error": 0
+    }
+  },
+  "dataset_ids": [
+    "L01",
+    "T01"
+  ],
+  "random_seed": 42,
+  "training_parameters": {
+    "objective": "regression",
+    "metric": "mae",
+    "num_leaves": 12,
+    "learning_rate": 0.02,
+    "n_estimators": 500,
+    "verbose": -1,
+    "subsample": 0.9,
+    "subsample_freq": 1,
+    "colsample_bytree": 0.9,
+    "min_child_samples": 8,
+    "reg_alpha": 0.2,
+    "reg_lambda": 0.5,
+    "min_gain_to_split": 0.0001,
+    "seed": 42,
+    "feature_fraction_seed": 42,
+    "bagging_seed": 42,
+    "data_random_seed": 42
+  },
+  "best_iteration": 356,
+  "split_counts": {
+    "train": 326,
+    "validation": 70,
+    "test": 69
+  },
+  "split_source": "research_v2\\volume_validation\\datasets\\t01_l01_scaled_10mm\\splits.json",
+  "model_path": "research_v2\\volume_validation\\output_v2_scaled_10mm\\shape_aware_model_v2_scaled_10mm.txt",
+  "historical_model_used": false
+}

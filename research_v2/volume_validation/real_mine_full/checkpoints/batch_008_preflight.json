@@ -1,0 +1,53 @@
+{
+  "status": "PREFLIGHT_PASS",
+  "created_utc": "2026-08-26T12:40:01.262562+00:00",
+  "batch_index": 8,
+  "batch_range": {
+    "manifest_positions_one_based": [
+      3501,
+      4000
+    ],
+    "sample_ids": [
+      "dom2_volume_sample_3501",
+      "dom2_volume_sample_4000"
+    ]
+  },
+  "frozen_inputs": {
+    "manifest": "research_v2/volume_validation/real_mine_sampling/real_mine_volume_sample_manifest.csv",
+    "accepted_instances": "output/dom2_cascade_v2_3d_fixed/accepted_instances.json",
+    "model": "research_v2/volume_validation/output_v2_scaled_10mm/shape_aware_model_v2_scaled_10mm.txt",
+    "dom": "data/dom2/DOM.tif",
+    "pointclouds": [
+      "data/pointcloud2/Data/BlockB.laz",
+      "data/pointcloud2/Data/BlockY.laz"
+    ],
+    "masks": "output/dom2_cascade_v2/rock_masks.npz"
+  },
+  "checks": {
+    "manifest_count": 4000,
+    "manifest_sample_ids_unique": true,
+    "manifest_rock_ids_unique": true,
+    "all_manifest_rocks_accepted": true,
+    "accepted_population": 69911,
+    "canonical_feature_count": 12,
+    "canonical_feature_order": [
+      "C",
+      "AR",
+      "solidity",
+      "compactness",
+      "eq_diam_ratio",
+      "H_mean_norm",
+      "H_std_norm",
+      "H_p25_norm",
+      "H_p75_norm",
+      "H_skew_norm",
+      "fill_ratio",
+      "ellipsoid_ratio"
+    ],
+    "model_feature_count": 12,
+    "model_feature_order_matches": true,
+    "grid_resolution_m": 0.01,
+    "scale_factor_provenance": 82.73784,
+    "output_collision": false
+  }
+}

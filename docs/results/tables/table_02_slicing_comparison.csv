@@ -1,3 +1,0 @@
-﻿Method,Total tiles,Kept tiles,Skipped tiles,Coverage ratio,Key parameters
-SAHI,250,128,122,1.0,"patch_size=1024, overlap=0.15, min_content_ratio=0.1"
-Quadtree DOM,456,348,108,1.0,"base_tile_size_m=10, min_tile_size_m=5, min_edge_density=0.1, tile_overlap_m=0.5, min_content_ratio=0.05"

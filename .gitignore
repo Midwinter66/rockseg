@@ -34,6 +34,17 @@ experiments/runs/
 experiments/reports/*/
 experiments/reports/*.docx
 
+# Pipeline output and archived experiments (large binary results)
+output/
+archive/
+
+# Node.js dependencies
+node_modules/
+
+# Data archives and stray files
+*.zip
+=
+
 # Publisher files and generated reference pages
 rockseg-references/*.pdf
 rockseg-references/_shared/
@@ -43,6 +54,7 @@ Ultralytics/
 .agents/
 .uploads/
 .reasonix/
+reasonix.toml
 .vscode/
 .idea/
 .codegraph/

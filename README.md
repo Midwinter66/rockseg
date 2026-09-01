@@ -1,199 +1,128 @@
-# RockSeg: DOM and OSGB Point-Cloud Rock Fragment Measurement
+# RockSeg
 
-RockSeg is a research pipeline for detecting and measuring rock fragments in an open-pit scene. It combines a high-resolution digital orthophoto map (DOM) with a point cloud converted from the same photogrammetric OSGB model.
+RockSeg is a physical-scale-driven rock segmentation and volume-estimation
+pipeline for UAV DOM and OSEB-derived point clouds. It connects multi-scale
+DOM instance segmentation, 2D-3D association, ground-referenced 2.5D surface
+reconstruction, and a canonical shape-aware LightGBM correction model into a
+single reproducible workflow.
 
-The point cloud used by this project is **not LiDAR data**. The current main experiment uses OSGB-derived surface points for three-dimensional validation and GroundDEM-based 2.5D volume estimation.
-
-Target journal: *Measurement*.
-
-## Project Status
-
-The main single-scene pipeline is operational for a minimum reported equivalent diameter of `0.5 m`:
-
-1. Edge-density-guided quadtree slicing
-2. YOLO11m-seg instance segmentation
-3. Pixel-to-world coordinate mapping
-4. Cross-tile correlation-clustering fusion
-5. Point-cloud-assisted 3D validation
-6. GroundDEM-based 2.5D volume estimation
-7. Comparison with a 2D equivalent-sphere proxy
-
-The current scene does not yet have complete manual detection labels or per-stone volume ground truth. Therefore, the repository reports pipeline statistics and relative method comparisons, but does not claim absolute detection or volume accuracy.
-
-## Method Overview
-
-```mermaid
-flowchart LR
-    A["OSGB-derived DOM"] --> B["Edge-guided quadtree slicing"]
-    B --> C["YOLO11m-seg instance masks"]
-    C --> D["World-coordinate mapping"]
-    D --> E["Correlation-clustering fusion"]
-    P["OSGB-derived point cloud"] --> F["Point-cloud 3D validation"]
-    E --> F
-    F --> G["GroundDEM-based 2.5D volume"]
-    E --> H["2D equivalent-sphere proxy"]
-    G --> I["Size and volume statistics"]
-    H --> I
-```
-
-Convex-hull volume is not part of the main reported volume pipeline. It may be retained only as a separate diagnostic when investigating shell-like point-cloud behavior.
-
-## Current Main Scene
-
-| Item | Current setting |
-|---|---|
-| Scene ID | `dom2_pointcloud2` |
-| DOM | `data/dom2/DOM.tif` |
-| World file | `data/dom2/DOM.tfw` |
-| Point clouds | `data/pointcloud2/Data/BlockB.laz`, `BlockY.laz` |
-| DOM size | 8783 x 21713 pixels |
-| Ground resolution | 0.01 m/pixel |
-| Coordinate system | EPSG:4536 |
-| Scene area | 19070.53 m2 |
-| Point-cloud coordinates | Absolute world coordinates, zero XY shift |
-| Minimum equivalent diameter | 0.5 m |
-
-All active scripts obtain these paths from `experiments/common/scene_reference.py`. Do not mix `dom2` with `pointcloud3`; those folders represent different exported data products.
-
-## Current Results
-
-The current main run produced:
-
-| Stage or metric | Value |
-|---|---:|
-| Quadtree tiles generated / retained | 456 / 348 |
-| Raw mask candidates | 62,015 |
-| Detections after 0.5 m filtering | 7,349 |
-| Fusion candidates | 6,258 |
-| 3D-accepted fused stones | 6,071 |
-| 3D-rejected candidates | 187 |
-| Volume QC passed | 6,067 / 6,071 |
-| 2.5D total volume | 1271.5422 m3 |
-| 2.5D mean volume | 0.2096 m3 |
-| 2D proxy total volume | 1699.2841 m3 |
-| Pearson correlation, 2D proxy vs. 2.5D | 0.7733 |
-| Median 2D proxy / 2.5D ratio | 1.3565 |
-
-These numbers apply only to the current scene and the `0.5 m` minimum equivalent-diameter setting. See [current_results.md](docs/results/current_results.md) and [current_results.json](docs/results/current_results.json) for the repository snapshot used for paper writing.
-
-## Repository Layout
+## Method Pipeline
 
 ```text
-.
-|-- README.md
-|-- environment.yml
-|-- requirements.txt
-|-- docs/
-|   |-- DATA_SETUP.md
-|   |-- PROJECT_INVENTORY.md
-|   |-- paper/
-|   `-- results/
-|-- experiments/
-|   |-- common/          # scene reference, spatial index, mask-to-point-cloud crop
-|   |-- configs/         # slicing, detection, and fusion parameters
-|   |-- slicing/         # SAHI and quadtree slicing
-|   |-- detection/       # YOLO instance segmentation and 2D measurements
-|   |-- fusion/          # cross-tile fusion and 3D validation
-|   |-- volume/          # GroundDEM and volume estimators
-|   |-- evaluation/      # optional manual/automatic review tools
-|   |-- tuning/          # parameter search utilities
-|   |-- visualization/   # full-scene and per-stone inspection
-|   |-- reports/         # manuscript table/result exporters
-|   `-- utils/           # shared slicing reports and visualizations
-|-- models/
-|   `-- best.pt          # selected YOLO11m-seg checkpoint
-`-- rockseg-references/  # reading notes; publisher PDFs remain local
+UAV DOM (10 mm/pixel)
+  -> physical-scale multi-scale instance segmentation
+  -> within-scale fusion + cascade deduplication
+  -> final rock inventory (76,407 instances)
+  -> existing 2D-3D association / accepted-instance filtering (69,911 accepted)
+  -> ground/background separation
+  -> 10 mm ground-referenced 2.5D top surface
+  -> canonical 12 shape features
+  -> frozen scaled-10mm Shape-Aware LightGBM
+  -> V_pred = V_2.5D x y_pred
+  -> size-stratified representative volume results
+  -> PSD / P80 analysis (next step)
 ```
 
-Raw data, full experiment outputs, bulk images, dated runs, and publisher PDFs are intentionally excluded from GitHub.
+The external mesh methodology (T01: 79 meshes + L01: 386 meshes, 465 objects)
+uses a pre-specified uniform scale factor of 82.737840 to adapt external OBJ
+geometry to the mine footprint scale. The 0.5 mm V2 result is external
+validation only; it is not applied to real-mine point clouds.
+
+## Frozen Results
+
+### External Scaled 10 mm Test (69 held-out objects)
+
+| Method | MAPE | R2 |
+| --- | ---: | ---: |
+| Raw 2.5D | 54.24% | 0.1895 |
+| Constant correction | 6.99% | 0.9705 |
+| Shape-Aware V2 | 5.82% | 0.9838 |
+
+### DOM2 4,000-Rock Representative Application
+
+| Item | Result |
+| --- | ---: |
+| DOM2 final instances | 76,407 |
+| DOM2 accepted instances | 69,911 |
+| Stratified representative sample | 4,000 |
+| Successful pipeline records | 3,639 / 4,000 (90.98%) |
+| Failures | 361 (all `empty_2_5d_surface`) |
+
+### Size-Stratified Completion
+
+| Stratum | Sample | Success | Rate |
+| --- | ---: | ---: | ---: |
+| S1 (P0-P10) | 400 | 336 | 84.00% |
+| S2 (P10-P25) | 600 | 518 | 86.33% |
+| S3 (P25-P50) | 1,000 | 875 | 87.50% |
+| S4 (P50-P75) | 1,000 | 923 | 92.30% |
+| S5 (P75-P90) | 600 | 588 | 98.00% |
+| S6 (P90-P100) | 400 | 399 | 99.75% |
+
+The external 5.82% MAPE is not real-mine accuracy. The DOM2 90.98% is pipeline
+completion rate, not volume accuracy; per-rock mine ground truth is not
+available.
+
+## Canonical Shape Features
+
+The 12-dimensional feature schema (fixed in training and inference):
+
+`C, AR, solidity, compactness, eq_diam_ratio, H_mean_norm, H_std_norm,
+H_p25_norm, H_p75_norm, H_skew_norm, fill_ratio, ellipsoid_ratio`
+
+- Target: `y_ratio = V_true / V_2.5D`
+- Prediction: `V_pred = V_2.5D x y_pred`
+- Best iteration: 356
+
+## Project Structure
+
+| Role | Path |
+| --- | --- |
+| Pipeline package | `rockseg/` |
+| Detection entry point | `run_rockseg.py` |
+| 3D association entry point | `run_3d_validation_fast.py` |
+| Volume estimation entry point | `run_volume_estimation.py` |
+| Detection model | `models/best.pt` |
+| Volume validation code | `research_v2/volume_validation/` |
+| Frozen scaled-10mm model | `research_v2/volume_validation/output_v2_scaled_10mm/` |
+| 4,000-rock results | `research_v2/volume_validation/real_mine_full/` |
+| Scaled-10mm dataset | `research_v2/volume_validation/datasets/t01_l01_scaled_10mm/` |
+| Experiment configs | `experiments/configs/` |
+
+## Source Data (not in repository)
+
+| Data | Path | Size |
+| --- | --- | ---: |
+| DOM2 orthophoto | `data/dom2/DOM.tif` | 546 MB |
+| DOM2 point clouds | `data/pointcloud2/Data/BlockB.laz`, `BlockY.laz` | 1.08 GB |
+| DOM3 orthophoto | `data/dom3/DOM.tif` | 473 MB |
+| DOM3 point clouds | `data/pointcloud3/Data/BlockB.laz`, `BlockY.laz` | 1.39 GB |
+| External meshes | `data/experience_rock/T01/`, `L01/` | — |
+
+Raw data is excluded from Git via `.gitignore`. See `docs/project_context/`
+for data preparation notes.
+
+## Documentation
+
+| Content | Path |
+| --- | --- |
+| Research overview | `research_v2/RESEARCH_OVERVIEW.md` |
+| Final research status | `research_v2/FINAL_RESEARCH_STATUS.md` |
+| Project context and decisions | `docs/project_context/` |
+| Presentations | `docs/presentations/` |
+| Reference literature | `docs/references/` |
+| Auxiliary scripts | `scripts/` (see `scripts/README.md`) |
 
 ## Environment
 
-The verified local environment uses Python `3.10`. Create the environment with:
+Install dependencies from `requirements.txt` or `environment.yml`. The local
+`Ultralytics/` checkout is not required; the pipeline imports the installed
+`ultralytics` package.
 
-```powershell
-conda env create -f environment.yml
-conda activate rock
-```
+## Important Notes
 
-GPU users should install the PyTorch build matching their CUDA driver if the generic package selected by `pip` is unsuitable. The repository was most recently run with PyTorch `2.11.0+cu128`, Ultralytics `8.4.60`, Open3D `0.19.0`, laspy `2.7.0`, and Rasterio `1.4.4`.
-
-## Data Setup
-
-The GitHub repository does not contain the multi-gigabyte DOM and LAZ files. Place the data in this exact structure:
-
-```text
-data/
-|-- dom2/
-|   |-- DOM.tif
-|   |-- DOM.tfw
-|   `-- DOM.prj
-`-- pointcloud2/
-    `-- Data/
-        |-- BlockB.laz
-        `-- BlockY.laz
-```
-
-Detailed checks and migration guidance are in [DATA_SETUP.md](docs/DATA_SETUP.md).
-
-## Main Run Commands
-
-Run commands from the repository root.
-
-```powershell
-# 1. DOM slicing
-python experiments/slicing/run_slicing_experiment.py --method quadtree_dom
-
-# 2. Instance segmentation and 2D measurement
-python experiments/detection/run_detection_experiment.py --source quadtree_dom
-
-# 3. Cross-tile fusion and point-cloud 3D validation
-python experiments/fusion/run_fusion_experiment.py --source quadtree_dom --method correlation_clustering
-
-# 4. GroundDEM-based 2.5D volume and 2D proxy comparison
-python experiments/volume/run_volume.py --source quadtree_dom --method correlation_clustering
-
-# 5. Export lightweight manuscript tables and GitHub result snapshots
-python experiments/reports/generate_measurement_manuscript_assets.py
-```
-
-The full generated outputs remain under `experiments/*/outputs/` and are ignored by Git. Re-running a stage overwrites or refreshes the corresponding local result set.
-
-## Visualization
-
-```powershell
-# Full point-cloud scene
-python experiments/visualization/view_full_pc.py
-
-# Fused stone masks on the DOM
-python experiments/fusion/visualize_fusion.py --source quadtree_dom --method correlation_clustering
-
-# Accepted stones mapped on the point cloud
-python experiments/visualization/run_visualize_pc.py --source quadtree_dom --method correlation_clustering --layout scene --mode accepted
-
-# Inspect the DOM and point-cloud correspondence of one stone
-python experiments/visualization/view_stone_mapping.py --source quadtree_dom --method correlation_clustering --stone-rank 0
-```
-
-`view_convex_hull_diagnostic.py` is a legacy diagnostic for investigating 2.5D versus convex-hull behavior. It is not evidence for the main paper volume comparison.
-
-## Evaluation Boundary
-
-The evaluation directory contains an earlier manual-review workflow and automatic point-cloud heuristics. Existing historical SAHI evaluation files must not be reported as accuracy for the current `quadtree_dom / correlation_clustering` main run.
-
-Before journal submission, the highest-priority missing experiment is a manual detection test set for the current scene, with explicit TP, FP, and FN definitions. Per-stone physical volume ground truth is unavailable, so volume results should be described as estimates and the 2D-versus-2.5D comparison as a relative consistency and bias analysis.
-
-## Paper Materials
-
-- Current methods draft: `docs/paper/measurement_methods_draft.md`
-- Results chapter framework: `docs/paper/section_4_results_framework.md`
-- Current machine-readable result snapshot: `docs/results/current_results.json`
-- Manuscript tables: `docs/results/tables/`
-- Repository audit and file classification: `docs/PROJECT_INVENTORY.md`
-
-## GitHub Publication Notes
-
-- GitHub's normal per-file limit is 100 MB. The raw DOM and LAZ files exceed that limit and must remain outside the repository.
-- `models/best.pt` is about 45 MB and is already part of Git history. It can remain in the repository, although a release asset is preferable if model versions begin to grow.
-- No open-source license has been selected yet. Add a `LICENSE` file before presenting the repository as reusable open-source software.
-- Review unpublished mine metadata, manuscript drafts, and model-sharing permissions before making the repository public.
+- Do not modify frozen datasets, model files, sample manifests, or result
+  files without registering a new experiment.
+- Pipeline outputs (`output/`) and archived experiments (`archive/`) are
+  excluded from Git; they contain large binary result files.
+- Raw data (`data/`) is excluded from Git; transfer separately.

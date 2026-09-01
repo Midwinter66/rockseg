@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="870" height="520" xmlns="http://www.w3.org/2000/svg" font-family="Arial, Helvetica, sans-serif">
+  <defs>
+    <marker id="arrS" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#333"/>
+    </marker>
+    <marker id="arrD" markerWidth="8" markerHeight="8" refX="7" refY="2.5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,5 L7,2.5 z" fill="#777"/>
+    </marker>
+  </defs>
+
+  <rect width="870" height="520" fill="white"/>
+
+  <!-- ================================================================ -->
+  <!-- ROW 1: DOM → Multi-scale → Within-scale  (L → R)                 -->
+  <!-- ================================================================ -->
+
+  <!-- Node 1: DOM (Data/Input — warm cream) -->
+  <rect x="40" y="35" width="230" height="85" fill="#eef1f6" stroke="#444" stroke-width="1.5" rx="5"/>
+  <text x="155" y="72" font-size="13" fill="#222" text-anchor="middle" font-weight="bold">DOM</text>
+  <text x="155" y="95" font-size="10" fill="#555" text-anchor="middle">0.01 m/pixel</text>
+
+  <!-- Arrow 1→2 -->
+  <line x1="272" y1="78" x2="317" y2="78" stroke="#333" stroke-width="1.5" marker-end="url(#arrS)"/>
+
+  <!-- Node 2: Multi-scale instance segmentation (2D Processing — light mint) -->
+  <rect x="320" y="35" width="230" height="85" fill="#eef1f6" stroke="#444" stroke-width="1.5" rx="5"/>
+  <text x="435" y="62" font-size="12" fill="#222" text-anchor="middle" font-weight="bold">Multi-scale instance</text>
+  <text x="435" y="77" font-size="12" fill="#222" text-anchor="middle" font-weight="bold">segmentation</text>
+  <text x="435" y="102" font-size="10" fill="#555" text-anchor="middle">Coarse / Medium / Fine</text>
+
+  <!-- Arrow 2→3 -->
+  <line x1="552" y1="78" x2="597" y2="78" stroke="#333" stroke-width="1.5" marker-end="url(#arrS)"/>
+
+  <!-- Node 3: Within-scale duplicate resolution (2D Processing — light mint) -->
+  <rect x="600" y="35" width="230" height="85" fill="#eef1f6" stroke="#444" stroke-width="1.5" rx="5"/>
+  <text x="715" y="62" font-size="12" fill="#222" text-anchor="middle" font-weight="bold">Within-scale duplicate</text>
+  <text x="715" y="77" font-size="12" fill="#222" text-anchor="middle" font-weight="bold">resolution</text>
+  <text x="715" y="102" font-size="10" fill="#555" text-anchor="middle">Overlap-aware fusion</text>
+
+  <!-- ================================================================ -->
+  <!-- TURN 1: right side, Node 3 bottom → Node 4 top (downward)        -->
+  <!-- ================================================================ -->
+  <line x1="715" y1="122" x2="715" y2="167" stroke="#333" stroke-width="1.5" marker-end="url(#arrS)"/>
+
+  <!-- ================================================================ -->
+  <!-- ROW 2: Cross-scale ← 2D-3D ← 2.5D  (R → L)                      -->
+  <!-- ================================================================ -->
+
+  <!-- Node 4: Cross-scale cascade deduplication (2D Processing — light mint) -->
+  <rect x="600" y="170" width="230" height="85" fill="#eef1f6" stroke="#444" stroke-width="1.5" rx="5"/>
+  <text x="715" y="197" font-size="12" fill="#222" text-anchor="middle" font-weight="bold">Cross-scale cascade</text>
+  <text x="715" y="212" font-size="12" fill="#222" text-anchor="middle" font-weight="bold">deduplication</text>
+  <text x="715" y="235" font-size="10" fill="#555" text-anchor="middle">Size-aware selection</text>
+
+  <!-- Arrow 4→5 (leftward) -->
+  <line x1="598" y1="213" x2="553" y2="213" stroke="#333" stroke-width="1.5" marker-end="url(#arrS)"/>
+
+  <!-- Node 5: 2D-3D association and screening (2D Processing — light mint) -->
+  <rect x="320" y="170" width="230" height="85" fill="#eef1f6" stroke="#444" stroke-width="1.5" rx="5"/>
+  <text x="435" y="197" font-size="12" fill="#222" text-anchor="middle" font-weight="bold">2D–3D association</text>
+  <text x="435" y="212" font-size="12" fill="#222" text-anchor="middle" font-weight="bold">and screening</text>
+  <text x="435" y="235" font-size="10" fill="#555" text-anchor="middle">Mask–point-cloud linkage</text>
+
+  <!-- Arrow 5→6 (leftward) -->
+  <line x1="318" y1="213" x2="273" y2="213" stroke="#333" stroke-width="1.5" marker-end="url(#arrS)"/>
+
+  <!-- Node 6: Ground-referenced 2.5D reconstruction (3D/Modeling — light sky) -->
+  <rect x="40" y="170" width="230" height="85" fill="#eef1f6" stroke="#444" stroke-width="1.5" rx="5"/>
+  <text x="155" y="197" font-size="12" fill="#222" text-anchor="middle" font-weight="bold">Ground-referenced</text>
+  <text x="155" y="212" font-size="12" fill="#222" text-anchor="middle" font-weight="bold">2.5D reconstruction</text>
+  <text x="155" y="235" font-size="10" fill="#555" text-anchor="middle">Ground DEM + 10 mm grid</text>
+
+  <!-- ================================================================ -->
+  <!-- TURN 2: left side, Node 6 bottom → Node 7 top (downward)        -->
+  <!-- ================================================================ -->
+  <line x1="155" y1="257" x2="155" y2="302" stroke="#333" stroke-width="1.5" marker-end="url(#arrS)"/>
+
+  <!-- ================================================================ -->
+  <!-- ROW 3: Shape descriptor → Shape-Aware → Volume  (L → R)          -->
+  <!-- ================================================================ -->
+
+  <!-- Node 7: Shape descriptor extraction (3D/Modeling — light sky) -->
+  <rect x="40" y="305" width="230" height="85" fill="#eef1f6" stroke="#444" stroke-width="1.5" rx="5"/>
+  <text x="155" y="332" font-size="12" fill="#222" text-anchor="middle" font-weight="bold">Shape descriptor</text>
+  <text x="155" y="347" font-size="12" fill="#222" text-anchor="middle" font-weight="bold">extraction</text>
+  <text x="155" y="370" font-size="10" fill="#555" text-anchor="middle">12 geometric features</text>
+
+  <!-- Arrow 7→8 -->
+  <line x1="272" y1="348" x2="317" y2="348" stroke="#333" stroke-width="1.5" marker-end="url(#arrS)"/>
+
+  <!-- Node 8: Shape-Aware correction (3D/Modeling — light sky) -->
+  <rect x="320" y="305" width="230" height="85" fill="#eef1f6" stroke="#444" stroke-width="1.5" rx="5"/>
+  <text x="435" y="340" font-size="13" fill="#222" text-anchor="middle" font-weight="bold">Shape-Aware correction</text>
+  <text x="435" y="364" font-size="10" fill="#555" text-anchor="middle">LightGBM regression</text>
+
+  <!-- Arrow 8→9 with y_pred label -->
+  <line x1="552" y1="348" x2="597" y2="348" stroke="#333" stroke-width="1.5" marker-end="url(#arrS)"/>
+  <text x="574" y="342" font-size="11" fill="#444" text-anchor="middle">
+    <tspan font-style="italic">y</tspan><tspan font-size="7" dy="2">pred</tspan>
+  </text>
+
+  <!-- Node 9: Rock volume estimation (3D/Modeling — light sky) -->
+  <rect x="600" y="305" width="230" height="85" fill="#eef1f6" stroke="#444" stroke-width="1.5" rx="5"/>
+  <text x="715" y="340" font-size="13" fill="#222" text-anchor="middle" font-weight="bold">Rock volume estimation</text>
+  <!-- Formula: V_pred = V_2.5D × y_pred  (italic vars, roman subscripts) -->
+  <text x="715" y="372" font-size="16" fill="#222" text-anchor="middle">
+    <tspan font-style="italic">V</tspan><tspan font-size="10" dy="3">pred</tspan><tspan dy="-3"> = </tspan><tspan font-style="italic">V</tspan><tspan font-size="10" dy="3">2.5D</tspan><tspan dy="-3"> × </tspan><tspan font-style="italic">y</tspan><tspan font-size="10" dy="3">pred</tspan>
+  </text>
+
+  <!-- ================================================================ -->
+  <!-- SIDE INPUTS (dashed, from above into Row 2 nodes)                -->
+  <!-- ================================================================ -->
+
+  <!-- Point-cloud data → Node 5 (2D-3D association) -->
+  <text x="435" y="152" font-size="10" fill="#666" text-anchor="middle" font-style="italic">Point-cloud data</text>
+  <line x1="435" y1="158" x2="435" y2="167" stroke="#777" stroke-width="1" stroke-dasharray="4,2" marker-end="url(#arrD)"/>
+
+  <!-- Ground / DEM → Node 6 (2.5D reconstruction) -->
+  <text x="155" y="152" font-size="10" fill="#666" text-anchor="middle" font-style="italic">Ground / DEM</text>
+  <line x1="155" y1="158" x2="155" y2="167" stroke="#777" stroke-width="1" stroke-dasharray="4,2" marker-end="url(#arrD)"/>
+
+  <!-- ================================================================ -->
+  <!-- EXTERNAL MODEL DEVELOPMENT INSET (compact, below Row 3)         -->
+  <!-- ================================================================ -->
+
+  <!-- Dashed arrow: inset → Node 8 (upward, "trained model") -->
+  <line x1="435" y1="425" x2="435" y2="393" stroke="#777" stroke-width="1.2" stroke-dasharray="5,3" marker-end="url(#arrD)"/>
+  <text x="452" y="412" font-size="10" fill="#666" font-style="italic">trained model</text>
+
+  <!-- Inset box -->
+  <rect x="255" y="428" width="360" height="72" fill="#f5f5f7" stroke="#888" stroke-width="1.2" stroke-dasharray="4,3" rx="5"/>
+  <text x="435" y="448" font-size="11" fill="#444" text-anchor="middle" font-weight="bold">Model development (external)</text>
+  <text x="435" y="466" font-size="10" fill="#555" text-anchor="middle">Known-volume meshes &#8594; 10 mm rasterization &#8594;</text>
+  <text x="435" y="481" font-size="10" fill="#555" text-anchor="middle">12 features &#8594; LightGBM correction model</text>
+
+  <!-- "Real-mine inference" label at top of main flow -->
+  <text x="40" y="25" font-size="10" fill="#777" text-anchor="start" font-style="italic">Real-mine inference</text>
+
+</svg>

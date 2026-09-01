@@ -1,0 +1,97 @@
+{
+  "dataset_name": "t01_l01_v2_shape_aware_10mm",
+  "constructed_at": "2026-08-26T19:05:03",
+  "construction_time_s": 442.198,
+  "random_seed": 42,
+  "grid_res_mm": 10.0,
+  "resolution_mm": 10.0,
+  "scale_factor": 82.73784,
+  "scale_rule": "uniform XYZ scaling before 2.5D rasterization",
+  "split_ratio": {
+    "train": 0.7,
+    "validation": 0.15,
+    "test": 0.15
+  },
+  "source_directories": {
+    "T01": "data/experience_rock/T01",
+    "L01": "data/experience_rock/L01"
+  },
+  "feature_names": [
+    "C",
+    "AR",
+    "solidity",
+    "compactness",
+    "eq_diam_ratio",
+    "H_mean_norm",
+    "H_std_norm",
+    "H_p25_norm",
+    "H_p75_norm",
+    "H_skew_norm",
+    "fill_ratio",
+    "ellipsoid_ratio"
+  ],
+  "feature_order": [
+    "C",
+    "AR",
+    "solidity",
+    "compactness",
+    "eq_diam_ratio",
+    "H_mean_norm",
+    "H_std_norm",
+    "H_p25_norm",
+    "H_p75_norm",
+    "H_skew_norm",
+    "fill_ratio",
+    "ellipsoid_ratio"
+  ],
+  "feature_formulas": {
+    "C": "min(4*pi*A/P^2, 1)",
+    "AR": "L/W",
+    "solidity": "min(A/A_convex, 1)",
+    "compactness": "P/sqrt(A)",
+    "eq_diam_ratio": "sqrt(4*A/pi)/L",
+    "H_mean_norm": "H_mean/H",
+    "H_std_norm": "H_std/H",
+    "H_p25_norm": "H_p25/H",
+    "H_p75_norm": "H_p75/H",
+    "H_skew_norm": "H_skew",
+    "fill_ratio": "V_2_5D/V_box",
+    "ellipsoid_ratio": "V_2_5D/V_ellipsoid"
+  },
+  "target_definition": "y_ratio = V_true / V_2_5D",
+  "volume_definition": {
+    "V_true": "OBJ triangular mesh volume via the divergence theorem, multiplied by scale_factor^3",
+    "V_2_5D": "top-down 2.5D height integration at grid_res_mm"
+  },
+  "counts": {
+    "T01": {
+      "total": 79,
+      "success": 79,
+      "error": 0
+    },
+    "L01": {
+      "total": 386,
+      "success": 386,
+      "error": 0
+    }
+  },
+  "n_total": 465,
+  "n_success": 465,
+  "n_error": 0,
+  "split_counts": {
+    "train": 326,
+    "validation": 70,
+    "test": 69
+  },
+  "leakage_check": {
+    "sample_index_overlaps": {
+      "train_idx__validation_idx": [],
+      "train_idx__test_idx": [],
+      "validation_idx__test_idx": []
+    },
+    "leaked_original_obj_ids": {},
+    "duplicate_original_obj_ids": {},
+    "has_leakage": false
+  },
+  "quality_flagged_samples": []
+}

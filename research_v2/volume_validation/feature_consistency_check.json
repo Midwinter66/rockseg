@@ -1,0 +1,148 @@
+{
+  "generated_at": "2026-08-26T18:08:34",
+  "status": "PASS",
+  "selected_with_seed": 42,
+  "sample_count": 5,
+  "schema": {
+    "feature_names": [
+      "C",
+      "AR",
+      "solidity",
+      "compactness",
+      "eq_diam_ratio",
+      "H_mean_norm",
+      "H_std_norm",
+      "H_p25_norm",
+      "H_p75_norm",
+      "H_skew_norm",
+      "fill_ratio",
+      "ellipsoid_ratio"
+    ],
+    "feature_formulas": {
+      "C": "min(4*pi*A/P^2, 1)",
+      "AR": "L/W",
+      "solidity": "min(A/A_convex, 1)",
+      "compactness": "P/sqrt(A)",
+      "eq_diam_ratio": "sqrt(4*A/pi)/L",
+      "H_mean_norm": "H_mean/H",
+      "H_std_norm": "H_std/H",
+      "H_p25_norm": "H_p25/H",
+      "H_p75_norm": "H_p75/H",
+      "H_skew_norm": "H_skew",
+      "fill_ratio": "V_2_5D/V_box",
+      "ellipsoid_ratio": "V_2_5D/V_ellipsoid"
+    },
+    "unit_rule": "All geometry quantities for one surface use one length unit; the 12 exported features are dimensionless.",
+    "height_skew_rule": "H_skew_norm is the unnormalised H_skew value."
+  },
+  "model_feature_order": [
+    "C",
+    "AR",
+    "solidity",
+    "compactness",
+    "eq_diam_ratio",
+    "H_mean_norm",
+    "H_std_norm",
+    "H_p25_norm",
+    "H_p75_norm",
+    "H_skew_norm",
+    "fill_ratio",
+    "ellipsoid_ratio"
+  ],
+  "production_grid_rule": "The adapter accepts its supplied grid resolution; planned mine-site resolution is 0.01 m.",
+  "tolerance": {
+    "max_abs_diff": 1e-10
+  },
+  "samples": [
+    {
+      "sample_id": "L01E083a",
+      "dataset_id": "L01",
+      "original_obj_id": "L01E083a",
+      "V_true": 56.71692640131414,
+      "V_2_5D": 78.46962049739459,
+      "all_features_finite": true,
+      "volumes_positive": true,
+      "cache_vs_canonical": {
+        "max_abs_diff": 0.0,
+        "max_rel_diff": 0.0
+      },
+      "canonical_vs_production": {
+        "max_abs_diff": 0.0,
+        "max_rel_diff": 0.0
+      }
+    },
+    {
+      "sample_id": "L01D024a",
+      "dataset_id": "L01",
+      "original_obj_id": "L01D024a",
+      "V_true": 320.6598366710243,
+      "V_2_5D": 437.35904756386606,
+      "all_features_finite": true,
+      "volumes_positive": true,
+      "cache_vs_canonical": {
+        "max_abs_diff": 0.0,
+        "max_rel_diff": 0.0
+      },
+      "canonical_vs_production": {
+        "max_abs_diff": 0.0,
+        "max_rel_diff": 0.0
+      }
+    },
+    {
+      "sample_id": "L01C024a",
+      "dataset_id": "L01",
+      "original_obj_id": "L01C024a",
+      "V_true": 1318.370855230227,
+      "V_2_5D": 1992.6105705463767,
+      "all_features_finite": true,
+      "volumes_positive": true,
+      "cache_vs_canonical": {
+        "max_abs_diff": 0.0,
+        "max_rel_diff": 0.0
+      },
+      "canonical_vs_production": {
+        "max_abs_diff": 0.0,
+        "max_rel_diff": 0.0
+      }
+    },
+    {
+      "sample_id": "L01E136a",
+      "dataset_id": "L01",
+      "original_obj_id": "L01E136a",
+      "V_true": 140.8176042502337,
+      "V_2_5D": 217.5295703389952,
+      "all_features_finite": true,
+      "volumes_positive": true,
+      "cache_vs_canonical": {
+        "max_abs_diff": 0.0,
+        "max_rel_diff": 0.0
+      },
+      "canonical_vs_production": {
+        "max_abs_diff": 0.0,
+        "max_rel_diff": 0.0
+      }
+    },
+    {
+      "sample_id": "L01D108a",
+      "dataset_id": "L01",
+      "original_obj_id": "L01D108a",
+      "V_true": 137.48299534787844,
+      "V_2_5D": 219.27931767518044,
+      "all_features_finite": true,
+      "volumes_positive": true,
+      "cache_vs_canonical": {
+        "max_abs_diff": 0.0,
+        "max_rel_diff": 0.0
+      },
+      "canonical_vs_production": {
+        "max_abs_diff": 0.0,
+        "max_rel_diff": 0.0
+      }
+    }
+  ],
+  "summary": {
+    "max_absolute_difference": 0.0,
+    "max_relative_difference": 0.0,
+    "feature_order_matches": true
+  }
+}

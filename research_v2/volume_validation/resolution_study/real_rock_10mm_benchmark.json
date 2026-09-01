@@ -1,0 +1,46 @@
+{
+  "study_name": "Real Mine-site 10 mm 2.5D Feasibility Benchmark",
+  "status": "BLOCKED_NO_REUSABLE_POINT_LEVEL_ARTIFACTS",
+  "executed": false,
+  "production_code_modified": false,
+  "model_loaded": false,
+  "dataset_B_modified": false,
+  "obj_recomputed": false,
+  "image_generated": false,
+  "requested_grid_resolution_m": 0.01,
+  "existing_site_b_artifact_checked": "experiments/site_b_run/outputs/p1/volume/outputs/quadtree_dom/correlation_clustering/volume_checkpoint.ndjson",
+  "existing_configuration_checked": "experiments/site_b_run/config/volume_frozen.json",
+  "available_existing_per_stone_data": [
+    "stone_id and world bounding box",
+    "cropped/associated point count",
+    "50 mm 2.5D grid dimensions and aggregate occupancy statistics",
+    "50 mm height summary statistics",
+    "50 mm V_2.5D"
+  ],
+  "missing_required_inputs_for_10mm": [
+    "per-stone associated XYZ point coordinates",
+    "per-stone ground elevation values or reusable GroundDEM",
+    "per-stone mask/polygon geometry in a directly reusable point-level artifact",
+    "saved post-ground-removal point cloud"
+  ],
+  "reason": "The historical Site B volume configuration explicitly has save_per_stone=false. A 50 mm aggregate result cannot be subdivided or reliably transformed into a 10 mm height surface. Doing so would fabricate occupancy and height statistics.",
+  "existing_50mm_example": {
+    "stone_id": "stone_000000",
+    "point_count": 61101,
+    "grid_resolution_m": 0.05,
+    "grid_nx": 43,
+    "grid_ny": 34,
+    "occupied_cells": 1008,
+    "valid_cells": 987,
+    "occupancy_ratio": 0.9792,
+    "V_2_5D_m3": 1.4464
+  },
+  "answers": {
+    "ten_mm_surface_stable": "NOT AVAILABLE",
+    "empty_cell_ratio_acceptable": "NOT AVAILABLE",
+    "ground_removal_problem": "NOT AVAILABLE",
+    "five_vs_ten_mm_stability": "NOT AVAILABLE",
+    "can_construct_10mm_training_dataset": "NOT YET. First run the existing association and ground-removal pipeline for a small selected subset while retaining point-level intermediates in a research-only benchmark output."
+  },
+  "next_required_action": "Run the existing point association plus GroundDEM workflow on 10 selected saved Site B stones, retaining only research-benchmark point-level intermediates long enough to calculate 5 mm and 10 mm occupancy. Do not load Shape-Aware V2 or run the full mine site."
+}

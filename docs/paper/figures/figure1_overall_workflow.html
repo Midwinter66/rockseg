@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Figure 1. Overall Research Workflow</title>
+<style>
+  body { margin:0; padding:20px; background:#fff; font-family:Arial,Helvetica,sans-serif; }
+  .caption { font-size:12px; color:#333; max-width:900px; line-height:1.6; margin-top:8px; }
+</style>
+</head>
+<body>
+<svg width="900" height="870" xmlns="http://www.w3.org/2000/svg" style="font-family:Arial,Helvetica,sans-serif">
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#666"/>
+    </marker>
+    <marker id="arrB" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#4a7ba6"/>
+    </marker>
+  </defs>
+
+  <rect width="900" height="870" fill="white"/>
+
+  <!-- Section labels -->
+  <text x="240" y="22" font-size="11" fill="#999" text-anchor="middle">Main Pipeline</text>
+  <text x="690" y="22" font-size="11" fill="#999" text-anchor="middle">External Model Development</text>
+
+  <!-- Dashed separator -->
+  <line x1="475" y1="30" x2="475" y2="840" stroke="#ddd" stroke-width="1" stroke-dasharray="5,5"/>
+
+  <!-- ===== MAIN PIPELINE (x=80, w=320) ===== -->
+
+  <!-- Box 1: DOM2 -->
+  <rect x="80" y="35" width="320" height="48" fill="#fff" stroke="#333" stroke-width="1.5" rx="4"/>
+  <text x="240" y="55" font-size="13" fill="#333" text-anchor="middle" font-weight="bold">DOM2 Orthophoto</text>
+  <text x="240" y="73" font-size="11" fill="#666" text-anchor="middle">GSD: 0.01 m/pixel</text>
+
+  <line x1="240" y1="83" x2="240" y2="100" stroke="#666" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- Box 2: Multi-scale segmentation -->
+  <rect x="80" y="100" width="320" height="60" fill="#fff" stroke="#333" stroke-width="1.5" rx="4"/>
+  <text x="240" y="120" font-size="13" fill="#333" text-anchor="middle" font-weight="bold">Physical-Scale Multi-Scale Segmentation</text>
+  <text x="240" y="137" font-size="11" fill="#666" text-anchor="middle">Coarse: 10.24 m | Medium: 5.12 m | Fine: 2.56 m</text>
+  <text x="240" y="152" font-size="11" fill="#666" text-anchor="middle">20% overlap | Confidence threshold: 0.25</text>
+
+  <line x1="240" y1="160" x2="240" y2="177" stroke="#666" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- Box 3: Within-scale fusion -->
+  <rect x="80" y="177" width="320" height="48" fill="#fff" stroke="#333" stroke-width="1.5" rx="4"/>
+  <text x="240" y="197" font-size="13" fill="#333" text-anchor="middle" font-weight="bold">Within-Scale Duplicate Resolution</text>
+  <text x="240" y="215" font-size="11" fill="#666" text-anchor="middle">Weighted score: 0.30 IoU + 0.20 centroid + 0.20 area + 0.15 boundary + 0.15 conf</text>
+
+  <line x1="240" y1="225" x2="240" y2="242" stroke="#666" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- Box 4: Cross-scale cascade -->
+  <rect x="80" y="242" width="320" height="48" fill="#fff" stroke="#333" stroke-width="1.5" rx="4"/>
+  <text x="240" y="262" font-size="13" fill="#333" text-anchor="middle" font-weight="bold">Cross-Scale Cascade Deduplication</text>
+  <text x="240" y="280" font-size="11" fill="#666" text-anchor="middle">IoU >= 0.05 | Diam ratio >= 0.30 | Centroid <= radius | Primary scale</text>
+
+  <line x1="240" y1="290" x2="240" y2="307" stroke="#666" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- Box 5: Final inventory -->
+  <rect x="80" y="307" width="320" height="40" fill="#fff" stroke="#333" stroke-width="1.5" rx="4"/>
+  <text x="240" y="332" font-size="13" fill="#333" text-anchor="middle" font-weight="bold">Final DOM2 Inventory: 76,407 instances</text>
+
+  <line x1="240" y1="347" x2="240" y2="364" stroke="#666" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- Box 6: 2D-3D association -->
+  <rect x="80" y="364" width="320" height="48" fill="#fff" stroke="#333" stroke-width="1.5" rx="4"/>
+  <text x="240" y="384" font-size="13" fill="#333" text-anchor="middle" font-weight="bold">2D-3D Association &amp; Quality Screening</text>
+  <text x="240" y="402" font-size="11" fill="#666" text-anchor="middle">Float64 coordinates | Fixed thresholds</text>
+
+  <line x1="240" y1="412" x2="240" y2="429" stroke="#666" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- Box 7: Accepted/Rejected -->
+  <rect x="80" y="429" width="320" height="48" fill="#fff" stroke="#333" stroke-width="1.5" rx="4"/>
+  <text x="240" y="449" font-size="13" fill="#333" text-anchor="middle" font-weight="bold">Accepted: 69,911 | Rejected: 6,496</text>
+  <text x="240" y="467" font-size="11" fill="#666" text-anchor="middle">Acceptance rate: 91.50% (screening outcome, not accuracy)</text>
+
+  <line x1="240" y1="477" x2="240" y2="494" stroke="#666" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- Box 8: GroundDEM -->
+  <rect x="80" y="494" width="320" height="48" fill="#fff" stroke="#333" stroke-width="1.5" rx="4"/>
+  <text x="240" y="514" font-size="13" fill="#333" text-anchor="middle" font-weight="bold">GroundDEM Reference</text>
+  <text x="240" y="532" font-size="11" fill="#666" text-anchor="middle">0.5 m grid | P5 percentile | every 100th point</text>
+
+  <line x1="240" y1="542" x2="240" y2="559" stroke="#666" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- Box 9: 2.5D surface -->
+  <rect x="80" y="559" width="320" height="48" fill="#fff" stroke="#333" stroke-width="1.5" rx="4"/>
+  <text x="240" y="579" font-size="13" fill="#333" text-anchor="middle" font-weight="bold">10 mm 2.5D Observable Surface</text>
+  <text x="240" y="597" font-size="11" fill="#666" text-anchor="middle">Max height per grid cell above GroundDEM</text>
+
+  <line x1="240" y1="607" x2="240" y2="624" stroke="#666" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- Box 10: 12 features -->
+  <rect x="80" y="624" width="320" height="48" fill="#fff" stroke="#333" stroke-width="1.5" rx="4"/>
+  <text x="240" y="644" font-size="13" fill="#333" text-anchor="middle" font-weight="bold">Canonical 12-Feature Descriptor</text>
+  <text x="240" y="662" font-size="11" fill="#666" text-anchor="middle">Fixed order | Train/inference consistency: max diff = 0</text>
+
+  <line x1="240" y1="672" x2="240" y2="689" stroke="#666" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- Box 11: LightGBM correction -->
+  <rect x="80" y="689" width="320" height="58" fill="#fff" stroke="#333" stroke-width="1.5" rx="4"/>
+  <text x="240" y="709" font-size="13" fill="#333" text-anchor="middle" font-weight="bold">Shape-Aware V2 LightGBM Correction</text>
+  <text x="240" y="726" font-size="11" fill="#666" text-anchor="middle">y_pred = model(X_12)</text>
+  <text x="240" y="741" font-size="11" fill="#666" text-anchor="middle">V_pred = V_2.5D * y_pred</text>
+
+  <line x1="240" y1="747" x2="240" y2="764" stroke="#666" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- Box 12: 4000-rock application -->
+  <rect x="80" y="764" width="320" height="58" fill="#fff5f0" stroke="#c4632e" stroke-width="1.5" rx="4"/>
+  <text x="240" y="784" font-size="13" fill="#333" text-anchor="middle" font-weight="bold">4,000-Rock Representative Application</text>
+  <text x="240" y="801" font-size="11" fill="#666" text-anchor="middle">3,639 success | 361 failure (empty_2_5d_surface)</text>
+  <text x="240" y="816" font-size="11" fill="#666" text-anchor="middle">Completion rate: 90.98% (not volume accuracy)</text>
+
+  <!-- ===== EXTERNAL BRANCH (x=560, w=260) ===== -->
+
+  <!-- Box S1: External OBJ -->
+  <rect x="560" y="494" width="260" height="48" fill="#f0f7ff" stroke="#4a7ba6" stroke-width="1.5" rx="4"/>
+  <text x="690" y="514" font-size="13" fill="#333" text-anchor="middle" font-weight="bold">External OBJ Meshes (465)</text>
+  <text x="690" y="532" font-size="11" fill="#666" text-anchor="middle">T01: 79 | L01: 386</text>
+
+  <line x1="690" y1="542" x2="690" y2="559" stroke="#4a7ba6" stroke-width="1.5" marker-end="url(#arrB)"/>
+
+  <!-- Box S2: Scale factor -->
+  <rect x="560" y="559" width="260" height="40" fill="#f0f7ff" stroke="#4a7ba6" stroke-width="1.5" rx="4"/>
+  <text x="690" y="584" font-size="13" fill="#333" text-anchor="middle" font-weight="bold">Uniform Scale Factor: 82.737840</text>
+
+  <line x1="690" y1="599" x2="690" y2="616" stroke="#4a7ba6" stroke-width="1.5" marker-end="url(#arrB)"/>
+
+  <!-- Box S3: Scaled dataset -->
+  <rect x="560" y="616" width="260" height="48" fill="#f0f7ff" stroke="#4a7ba6" stroke-width="1.5" rx="4"/>
+  <text x="690" y="636" font-size="13" fill="#333" text-anchor="middle" font-weight="bold">Scaled 10 mm Dataset</text>
+  <text x="690" y="654" font-size="11" fill="#666" text-anchor="middle">Split: 326 / 70 / 69 | 465/465 valid</text>
+
+  <line x1="690" y1="664" x2="690" y2="681" stroke="#4a7ba6" stroke-width="1.5" marker-end="url(#arrB)"/>
+
+  <!-- Box S4: Frozen model -->
+  <rect x="560" y="681" width="260" height="48" fill="#f0f7ff" stroke="#4a7ba6" stroke-width="1.5" rx="4"/>
+  <text x="690" y="701" font-size="13" fill="#333" text-anchor="middle" font-weight="bold">Frozen LightGBM Model</text>
+  <text x="690" y="719" font-size="11" fill="#666" text-anchor="middle">Best iteration: 356</text>
+
+  <!-- Arrow from S4 to Box 11 (horizontal) -->
+  <path d="M 560 705 L 402 718" stroke="#4a7ba6" stroke-width="1.5" fill="none" marker-end="url(#arrB)" stroke-dasharray="4,3"/>
+  <text x="480" y="700" font-size="10" fill="#4a7ba6" text-anchor="middle">frozen model</text>
+
+  <line x1="690" y1="729" x2="690" y2="746" stroke="#4a7ba6" stroke-width="1.5" marker-end="url(#arrB)"/>
+
+  <!-- Box S5: External test -->
+  <rect x="560" y="746" width="260" height="58" fill="#f0f7ff" stroke="#4a7ba6" stroke-width="1.5" rx="4"/>
+  <text x="690" y="766" font-size="13" fill="#333" text-anchor="middle" font-weight="bold">External Test (69 held-out objects)</text>
+  <text x="690" y="783" font-size="11" fill="#666" text-anchor="middle">MAPE: 5.82% | R2: 0.9838</text>
+  <text x="690" y="798" font-size="10" fill="#c00" text-anchor="middle" font-style="italic">Scaled external mesh test only</text>
+
+  <!-- Warning annotation -->
+  <text x="690" y="820" font-size="10" fill="#c00" text-anchor="middle" font-weight="bold">NOT real-mine volume accuracy</text>
+
+</svg>
+
+<p class="caption">
+<b>Figure 1.</b> Overall research workflow. The main pipeline (left) processes DOM2 through physical-scale multi-scale
+segmentation, within-scale and cross-scale deduplication, 2D-3D association, ground-referenced 2.5D surface reconstruction,
+and frozen Shape-Aware V2 LightGBM correction to produce representative volume estimates for 4,000 accepted DOM2 rocks.
+The external model development branch (right) trains the correction model on 465 scaled OBJ meshes. The external test
+MAPE of 5.82% applies to scaled external mesh validation only; the 90.98% completion rate is a pipeline outcome, not
+volume accuracy. No per-rock real-mine ground-truth volume is available.
+</p>
+</body>
+</html>

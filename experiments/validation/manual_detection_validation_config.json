@@ -1,0 +1,47 @@
+{
+  "output_dir": "experiments/validation/outputs/manual_detection_validation",
+  "matching": {
+    "iou_threshold": 0.3,
+    "center_distance_m": 0.3,
+    "region_pad_m": 0.0
+  },
+  "evaluation": {
+    "min_report_diameter_m": 0.5,
+    "diameter_bins_m": [
+      {
+        "label": "0.50-0.75",
+        "min_m": 0.5,
+        "max_m": 0.75
+      },
+      {
+        "label": "0.75-1.00",
+        "min_m": 0.75,
+        "max_m": 1.0
+      },
+      {
+        "label": "1.00-1.50",
+        "min_m": 1.0,
+        "max_m": 1.5
+      },
+      {
+        "label": "1.50+",
+        "min_m": 1.5,
+        "max_m": null
+      }
+    ]
+  },
+  "sites": [
+    {
+      "site_id": "site_a",
+      "predictions_json": "experiments/fusion/outputs/quadtree_dom/correlation_clustering/accepted_stones.json",
+      "regions_csv": "experiments/validation/manual_annotations/site_a_validation_regions.csv",
+      "annotations_csv": "experiments/validation/manual_annotations/site_a_manual_boxes.csv"
+    },
+    {
+      "site_id": "site_b",
+      "predictions_json": "experiments/site_b_run/outputs/p1/fusion/quadtree_dom/correlation_clustering/accepted_stones.json",
+      "regions_csv": "experiments/validation/manual_annotations/site_b_validation_regions.csv",
+      "annotations_csv": "experiments/validation/manual_annotations/site_b_manual_boxes.csv"
+    }
+  ]
+}

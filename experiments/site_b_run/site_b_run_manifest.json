@@ -1,0 +1,416 @@
+{
+  "runner": "experiments/site_b_run/run_site_b.py",
+  "scope_guard": "Mine Site B only. No Mine Site A configuration or output path is written.",
+  "scene": {
+    "name": "mine_site_b_provisional",
+    "dom_path": "D:\\github_project\\image_segment\\DOM_Space_message_val\\data\\dom3\\DOM.tif",
+    "tfw_path": "D:\\github_project\\image_segment\\DOM_Space_message_val\\data\\dom3\\DOM.tfw",
+    "pointcloud_paths": [
+      "D:\\github_project\\image_segment\\DOM_Space_message_val\\data\\pointcloud3\\Data\\BlockB.laz",
+      "D:\\github_project\\image_segment\\DOM_Space_message_val\\data\\pointcloud3\\Data\\BlockY.laz"
+    ],
+    "xy_transform": {
+      "mode": "translated_local",
+      "x_shift": 623499.1064384683,
+      "y_shift": 4678587.312019404
+    }
+  },
+  "scene_coordinate_qc": {
+    "status": "provisional_extent_check_passed_pending_manual_feature_check",
+    "note": "This shift is isolated to Mine Site B. It must not be copied into the Mine Site A scene definition."
+  },
+  "frozen_config_files": {
+    "detection_frozen.json": {
+      "path": "D:\\github_project\\image_segment\\DOM_Space_message_val\\experiments\\site_b_run\\config\\detection_frozen.json",
+      "bytes": 170,
+      "modified_utc": "2026-08-17T07:59:35.548247+00:00",
+      "sha256": "ed7ee3829044a5a05c1991e0d66601c94ee521aad8d1768fe7662c77b499cce7"
+    },
+    "fusion_p0_frozen.json": {
+      "path": "D:\\github_project\\image_segment\\DOM_Space_message_val\\experiments\\site_b_run\\config\\fusion_p0_frozen.json",
+      "bytes": 387,
+      "modified_utc": "2026-08-17T07:59:36.251365+00:00",
+      "sha256": "588a92d14af7901685e0d2657b67000c68dea4fbfc3694e642e211bb453b2e2f"
+    },
+    "fusion_p1_frozen.json": {
+      "path": "D:\\github_project\\image_segment\\DOM_Space_message_val\\experiments\\site_b_run\\config\\fusion_p1_frozen.json",
+      "bytes": 773,
+      "modified_utc": "2026-08-17T07:59:36.959664+00:00",
+      "sha256": "4a7fc845f2ba31a5d158d22e33efa7862f9430b60bbcd9ad28cc65c72e2bf095"
+    },
+    "quadtree_dom_frozen.json": {
+      "path": "D:\\github_project\\image_segment\\DOM_Space_message_val\\experiments\\site_b_run\\config\\quadtree_dom_frozen.json",
+      "bytes": 293,
+      "modified_utc": "2026-08-17T07:59:34.798086+00:00",
+      "sha256": "fa888dcde6e0fb845f82ea6545aebd3500fb4d1f0dcfc7b227e423b590fa9441"
+    },
+    "scene_b.json": {
+      "path": "D:\\github_project\\image_segment\\DOM_Space_message_val\\experiments\\site_b_run\\config\\scene_b.json",
+      "bytes": 569,
+      "modified_utc": "2026-08-17T07:59:34.083328+00:00",
+      "sha256": "4220cf420cebaf5683ed52776e859bb22bb5b52b2eb6b239c3867862a9b9fd99"
+    },
+    "volume_frozen.json": {
+      "path": "D:\\github_project\\image_segment\\DOM_Space_message_val\\experiments\\site_b_run\\config\\volume_frozen.json",
+      "bytes": 1239,
+      "modified_utc": "2026-08-17T07:59:37.661083+00:00",
+      "sha256": "5a32a5bfc97c49ef6e4b9671daeb3f05f985f6e02f34b54400665a2488dde168"
+    }
+  },
+  "events": [
+    {
+      "utc": "2026-08-17T08:01:22.248218+00:00",
+      "stage": "prepare",
+      "status": "ready",
+      "details": {
+        "dom": {
+          "path": "D:\\github_project\\image_segment\\DOM_Space_message_val\\data\\dom3\\DOM.tif",
+          "bytes": 495788098,
+          "modified_utc": "2026-06-13T02:40:44.877652+00:00"
+        },
+        "pointclouds": [
+          {
+            "path": "D:\\github_project\\image_segment\\DOM_Space_message_val\\data\\pointcloud3\\Data\\BlockB.laz",
+            "bytes": 753420150,
+            "modified_utc": "2026-06-18T08:29:51.993722+00:00"
+          },
+          {
+            "path": "D:\\github_project\\image_segment\\DOM_Space_message_val\\data\\pointcloud3\\Data\\BlockY.laz",
+            "bytes": 700520555,
+            "modified_utc": "2026-06-18T08:29:50.561076+00:00"
+          }
+        ],
+        "model": {
+          "path": "D:\\github_project\\image_segment\\DOM_Space_message_val\\models\\best.pt",
+          "bytes": 45247542,
+          "modified_utc": "2026-05-06T13:43:03.130286+00:00",
+          "sha256": "9d93f950cba98012c2769391cafa95985873557b930d9279b83e6aec3f4640d6"
+        }
+      }
+    },
+    {
+      "utc": "2026-08-17T08:10:41.054390+00:00",
+      "stage": "prepare",
+      "status": "ready",
+      "details": {
+        "dom": {
+          "path": "D:\\github_project\\image_segment\\DOM_Space_message_val\\data\\dom3\\DOM.tif",
+          "bytes": 495788098,
+          "modified_utc": "2026-06-13T02:40:44.877652+00:00"
+        },
+        "pointclouds": [
+          {
+            "path": "D:\\github_project\\image_segment\\DOM_Space_message_val\\data\\pointcloud3\\Data\\BlockB.laz",
+            "bytes": 753420150,
+            "modified_utc": "2026-06-18T08:29:51.993722+00:00"
+          },
+          {
+            "path": "D:\\github_project\\image_segment\\DOM_Space_message_val\\data\\pointcloud3\\Data\\BlockY.laz",
+            "bytes": 700520555,
+            "modified_utc": "2026-06-18T08:29:50.561076+00:00"
+          }
+        ],
+        "model": {
+          "path": "D:\\github_project\\image_segment\\DOM_Space_message_val\\models\\best.pt",
+          "bytes": 45247542,
+          "modified_utc": "2026-05-06T13:43:03.130286+00:00",
+          "sha256": "9d93f950cba98012c2769391cafa95985873557b930d9279b83e6aec3f4640d6"
+        }
+      }
+    },
+    {
+      "utc": "2026-08-17T08:10:49.568148+00:00",
+      "stage": "prepare",
+      "status": "ready",
+      "details": {
+        "dom": {
+          "path": "D:\\github_project\\image_segment\\DOM_Space_message_val\\data\\dom3\\DOM.tif",
+          "bytes": 495788098,
+          "modified_utc": "2026-06-13T02:40:44.877652+00:00"
+        },
+        "pointclouds": [
+          {
+            "path": "D:\\github_project\\image_segment\\DOM_Space_message_val\\data\\pointcloud3\\Data\\BlockB.laz",
+            "bytes": 753420150,
+            "modified_utc": "2026-06-18T08:29:51.993722+00:00"
+          },
+          {
+            "path": "D:\\github_project\\image_segment\\DOM_Space_message_val\\data\\pointcloud3\\Data\\BlockY.laz",
+            "bytes": 700520555,
+            "modified_utc": "2026-06-18T08:29:50.561076+00:00"
+          }
+        ],
+        "model": {
+          "path": "D:\\github_project\\image_segment\\DOM_Space_message_val\\models\\best.pt",
+          "bytes": 45247542,
+          "modified_utc": "2026-05-06T13:43:03.130286+00:00",
+          "sha256": "9d93f950cba98012c2769391cafa95985873557b930d9279b83e6aec3f4640d6"
+        }
+      }
+    },
+    {
+      "utc": "2026-08-17T08:10:56.868045+00:00",
+      "stage": "slicing",
+      "status": "complete",
+      "details": {
+        "output_dir": "D:\\github_project\\image_segment\\DOM_Space_message_val\\experiments\\site_b_run\\outputs\\slicing\\quadtree_dom",
+        "kept_tiles": 125,
+        "total_tiles": 141
+      }
+    },
+    {
+      "utc": "2026-08-17T08:11:48.939855+00:00",
+      "stage": "prepare",
+      "status": "ready",
+      "details": {
+        "dom": {
+          "path": "D:\\github_project\\image_segment\\DOM_Space_message_val\\data\\dom3\\DOM.tif",
+          "bytes": 495788098,
+          "modified_utc": "2026-06-13T02:40:44.877652+00:00"
+        },
+        "pointclouds": [
+          {
+            "path": "D:\\github_project\\image_segment\\DOM_Space_message_val\\data\\pointcloud3\\Data\\BlockB.laz",
+            "bytes": 753420150,
+            "modified_utc": "2026-06-18T08:29:51.993722+00:00"
+          },
+          {
+            "path": "D:\\github_project\\image_segment\\DOM_Space_message_val\\data\\pointcloud3\\Data\\BlockY.laz",
+            "bytes": 700520555,
+            "modified_utc": "2026-06-18T08:29:50.561076+00:00"
+          }
+        ],
+        "model": {
+          "path": "D:\\github_project\\image_segment\\DOM_Space_message_val\\models\\best.pt",
+          "bytes": 45247542,
+          "modified_utc": "2026-05-06T13:43:03.130286+00:00",
+          "sha256": "9d93f950cba98012c2769391cafa95985873557b930d9279b83e6aec3f4640d6"
+        }
+      }
+    },
+    {
+      "utc": "2026-08-17T08:33:41.430063+00:00",
+      "stage": "detection",
+      "status": "complete",
+      "details": {
+        "output_dir": "D:\\github_project\\image_segment\\DOM_Space_message_val\\experiments\\site_b_run\\outputs\\detection\\quadtree_dom",
+        "detections": 9756,
+        "processed_tiles": 125
+      }
+    },
+    {
+      "utc": "2026-08-17T09:10:09.336183+00:00",
+      "stage": "prepare",
+      "status": "ready",
+      "details": {
+        "dom": {
+          "path": "D:\\github_project\\image_segment\\DOM_Space_message_val\\data\\dom3\\DOM.tif",
+          "bytes": 495788098,
+          "modified_utc": "2026-06-13T02:40:44.877652+00:00"
+        },
+        "pointclouds": [
+          {
+            "path": "D:\\github_project\\image_segment\\DOM_Space_message_val\\data\\pointcloud3\\Data\\BlockB.laz",
+            "bytes": 753420150,
+            "modified_utc": "2026-06-18T08:29:51.993722+00:00"
+          },
+          {
+            "path": "D:\\github_project\\image_segment\\DOM_Space_message_val\\data\\pointcloud3\\Data\\BlockY.laz",
+            "bytes": 700520555,
+            "modified_utc": "2026-06-18T08:29:50.561076+00:00"
+          }
+        ],
+        "model": {
+          "path": "D:\\github_project\\image_segment\\DOM_Space_message_val\\models\\best.pt",
+          "bytes": 45247542,
+          "modified_utc": "2026-05-06T13:43:03.130286+00:00",
+          "sha256": "9d93f950cba98012c2769391cafa95985873557b930d9279b83e6aec3f4640d6"
+        }
+      }
+    },
+    {
+      "utc": "2026-08-17T09:10:11.595907+00:00",
+      "stage": "p0",
+      "status": "complete",
+      "details": {
+        "output_dir": "D:\\github_project\\image_segment\\DOM_Space_message_val\\experiments\\site_b_run\\outputs\\p0\\fusion\\quadtree_dom\\correlation_clustering",
+        "input_detections": 9756,
+        "candidate_stones": 8932,
+        "accepted_stones": 8932,
+        "three_dimensional_screening": false
+      }
+    },
+    {
+      "utc": "2026-08-17T09:10:32.626831+00:00",
+      "stage": "prepare",
+      "status": "ready",
+      "details": {
+        "dom": {
+          "path": "D:\\github_project\\image_segment\\DOM_Space_message_val\\data\\dom3\\DOM.tif",
+          "bytes": 495788098,
+          "modified_utc": "2026-06-13T02:40:44.877652+00:00"
+        },
+        "pointclouds": [
+          {
+            "path": "D:\\github_project\\image_segment\\DOM_Space_message_val\\data\\pointcloud3\\Data\\BlockB.laz",
+            "bytes": 753420150,
+            "modified_utc": "2026-06-18T08:29:51.993722+00:00"
+          },
+          {
+            "path": "D:\\github_project\\image_segment\\DOM_Space_message_val\\data\\pointcloud3\\Data\\BlockY.laz",
+            "bytes": 700520555,
+            "modified_utc": "2026-06-18T08:29:50.561076+00:00"
+          }
+        ],
+        "model": {
+          "path": "D:\\github_project\\image_segment\\DOM_Space_message_val\\models\\best.pt",
+          "bytes": 45247542,
+          "modified_utc": "2026-05-06T13:43:03.130286+00:00",
+          "sha256": "9d93f950cba98012c2769391cafa95985873557b930d9279b83e6aec3f4640d6"
+        }
+      }
+    },
+    {
+      "utc": "2026-08-17T09:17:45.236208+00:00",
+      "stage": "p1",
+      "status": "complete",
+      "details": {
+        "output_dir": "D:\\github_project\\image_segment\\DOM_Space_message_val\\experiments\\site_b_run\\outputs\\p1\\fusion\\quadtree_dom\\correlation_clustering",
+        "input_detections": 9756,
+        "candidate_stones": 8932,
+        "accepted_stones": 8538,
+        "three_dimensional_screening": true
+      }
+    },
+    {
+      "utc": "2026-08-17T09:59:57.681494+00:00",
+      "stage": "prepare",
+      "status": "ready",
+      "details": {
+        "dom": {
+          "path": "D:\\github_project\\image_segment\\DOM_Space_message_val\\data\\dom3\\DOM.tif",
+          "bytes": 495788098,
+          "modified_utc": "2026-06-13T02:40:44.877652+00:00"
+        },
+        "pointclouds": [
+          {
+            "path": "D:\\github_project\\image_segment\\DOM_Space_message_val\\data\\pointcloud3\\Data\\BlockB.laz",
+            "bytes": 753420150,
+            "modified_utc": "2026-06-18T08:29:51.993722+00:00"
+          },
+          {
+            "path": "D:\\github_project\\image_segment\\DOM_Space_message_val\\data\\pointcloud3\\Data\\BlockY.laz",
+            "bytes": 700520555,
+            "modified_utc": "2026-06-18T08:29:50.561076+00:00"
+          }
+        ],
+        "model": {
+          "path": "D:\\github_project\\image_segment\\DOM_Space_message_val\\models\\best.pt",
+          "bytes": 45247542,
+          "modified_utc": "2026-05-06T13:43:03.130286+00:00",
+          "sha256": "9d93f950cba98012c2769391cafa95985873557b930d9279b83e6aec3f4640d6"
+        }
+      }
+    },
+    {
+      "utc": "2026-08-17T10:23:56.591795+00:00",
+      "stage": "prepare",
+      "status": "ready",
+      "details": {
+        "dom": {
+          "path": "D:\\github_project\\image_segment\\DOM_Space_message_val\\data\\dom3\\DOM.tif",
+          "bytes": 495788098,
+          "modified_utc": "2026-06-13T02:40:44.877652+00:00"
+        },
+        "pointclouds": [
+          {
+            "path": "D:\\github_project\\image_segment\\DOM_Space_message_val\\data\\pointcloud3\\Data\\BlockB.laz",
+            "bytes": 753420150,
+            "modified_utc": "2026-06-18T08:29:51.993722+00:00"
+          },
+          {
+            "path": "D:\\github_project\\image_segment\\DOM_Space_message_val\\data\\pointcloud3\\Data\\BlockY.laz",
+            "bytes": 700520555,
+            "modified_utc": "2026-06-18T08:29:50.561076+00:00"
+          }
+        ],
+        "model": {
+          "path": "D:\\github_project\\image_segment\\DOM_Space_message_val\\models\\best.pt",
+          "bytes": 45247542,
+          "modified_utc": "2026-05-06T13:43:03.130286+00:00",
+          "sha256": "9d93f950cba98012c2769391cafa95985873557b930d9279b83e6aec3f4640d6"
+        }
+      }
+    },
+    {
+      "utc": "2026-08-17T11:01:57.840230+00:00",
+      "stage": "prepare",
+      "status": "ready",
+      "details": {
+        "dom": {
+          "path": "D:\\github_project\\image_segment\\DOM_Space_message_val\\data\\dom3\\DOM.tif",
+          "bytes": 495788098,
+          "modified_utc": "2026-06-13T02:40:44.877652+00:00"
+        },
+        "pointclouds": [
+          {
+            "path": "D:\\github_project\\image_segment\\DOM_Space_message_val\\data\\pointcloud3\\Data\\BlockB.laz",
+            "bytes": 753420150,
+            "modified_utc": "2026-06-18T08:29:51.993722+00:00"
+          },
+          {
+            "path": "D:\\github_project\\image_segment\\DOM_Space_message_val\\data\\pointcloud3\\Data\\BlockY.laz",
+            "bytes": 700520555,
+            "modified_utc": "2026-06-18T08:29:50.561076+00:00"
+          }
+        ],
+        "model": {
+          "path": "D:\\github_project\\image_segment\\DOM_Space_message_val\\models\\best.pt",
+          "bytes": 45247542,
+          "modified_utc": "2026-05-06T13:43:03.130286+00:00",
+          "sha256": "9d93f950cba98012c2769391cafa95985873557b930d9279b83e6aec3f4640d6"
+        }
+      }
+    },
+    {
+      "utc": "2026-08-17T11:16:20.691473+00:00",
+      "stage": "prepare",
+      "status": "ready",
+      "details": {
+        "dom": {
+          "path": "D:\\github_project\\image_segment\\DOM_Space_message_val\\data\\dom3\\DOM.tif",
+          "bytes": 495788098,
+          "modified_utc": "2026-06-13T02:40:44.877652+00:00"
+        },
+        "pointclouds": [
+          {
+            "path": "D:\\github_project\\image_segment\\DOM_Space_message_val\\data\\pointcloud3\\Data\\BlockB.laz",
+            "bytes": 753420150,
+            "modified_utc": "2026-06-18T08:29:51.993722+00:00"
+          },
+          {
+            "path": "D:\\github_project\\image_segment\\DOM_Space_message_val\\data\\pointcloud3\\Data\\BlockY.laz",
+            "bytes": 700520555,
+            "modified_utc": "2026-06-18T08:29:50.561076+00:00"
+          }
+        ],
+        "model": {
+          "path": "D:\\github_project\\image_segment\\DOM_Space_message_val\\models\\best.pt",
+          "bytes": 45247542,
+          "modified_utc": "2026-05-06T13:43:03.130286+00:00",
+          "sha256": "9d93f950cba98012c2769391cafa95985873557b930d9279b83e6aec3f4640d6"
+        }
+      }
+    },
+    {
+      "utc": "2026-08-17T11:20:41.761058+00:00",
+      "stage": "volume",
+      "status": "complete",
+      "details": {
+        "output_dir": "D:\\github_project\\image_segment\\DOM_Space_message_val\\experiments\\site_b_run\\outputs\\p1\\volume\\outputs\\quadtree_dom\\correlation_clustering",
+        "qc_passed": 8538,
+        "processed_stones": 8538
+      }
+    }
+  ]
+}

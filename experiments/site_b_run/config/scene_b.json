@@ -1,0 +1,16 @@
+{
+  "scene_name": "mine_site_b_provisional",
+  "dom_path": "data/dom3/DOM.tif",
+  "tfw_path": "data/dom3/DOM.tfw",
+  "pointcloud_paths": [
+    "data/pointcloud3/Data/BlockB.laz",
+    "data/pointcloud3/Data/BlockY.laz"
+  ],
+  "xy_transform": {
+    "mode": "translated_local",
+    "x_shift_m": 623499.1064384683,
+    "y_shift_m": 4678587.312019404
+  },
+  "coordinate_qc_status": "provisional_extent_check_passed_pending_manual_feature_check",
+  "coordinate_qc_note": "This shift is isolated to Mine Site B. It must not be copied into the Mine Site A scene definition."
+}

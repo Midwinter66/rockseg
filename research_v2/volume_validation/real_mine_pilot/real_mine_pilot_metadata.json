@@ -1,0 +1,115 @@
+{
+  "created_utc": "2026-08-26T11:42:05.691958+00:00",
+  "scene": "mine_site_b_provisional",
+  "source": {
+    "dom": "D:\\github_project\\image_segment\\DOM_Space_message_val\\data\\dom3\\DOM.tif",
+    "world_file": "D:\\github_project\\image_segment\\DOM_Space_message_val\\data\\dom3\\DOM.tfw",
+    "pointclouds": [
+      "D:\\github_project\\image_segment\\DOM_Space_message_val\\data\\pointcloud3\\Data\\BlockB.laz",
+      "D:\\github_project\\image_segment\\DOM_Space_message_val\\data\\pointcloud3\\Data\\BlockY.laz"
+    ],
+    "association": "D:\\github_project\\image_segment\\DOM_Space_message_val\\experiments\\site_b_run\\outputs\\p1\\fusion\\quadtree_dom\\correlation_clustering\\accepted_stones.json",
+    "detections": "D:\\github_project\\image_segment\\DOM_Space_message_val\\experiments\\site_b_run\\outputs\\detection\\quadtree_dom\\detections.json"
+  },
+  "coordinate_qc_status": "provisional_extent_check_passed_pending_manual_feature_check",
+  "model": {
+    "path": "D:\\github_project\\image_segment\\DOM_Space_message_val\\research_v2\\volume_validation\\output_v2_scaled_10mm\\shape_aware_model_v2_scaled_10mm.txt",
+    "feature_count": 12,
+    "feature_order": [
+      "C",
+      "AR",
+      "solidity",
+      "compactness",
+      "eq_diam_ratio",
+      "H_mean_norm",
+      "H_std_norm",
+      "H_p25_norm",
+      "H_p75_norm",
+      "H_skew_norm",
+      "fill_ratio",
+      "ellipsoid_ratio"
+    ],
+    "grid_resolution_m": 0.01,
+    "target_definition": "Frozen LightGBM correction ratio; V_pred_m3 = V_2_5D_m3 * y_pred",
+    "model_frozen": true
+  },
+  "processing": {
+    "ground_removal": "Existing GroundDEM reference with non-negative height clamp",
+    "ground_dem_resolution_m": 0.5,
+    "point_index_cell_size_m": 1.0,
+    "point_count_scene": 187360460,
+    "point_count_unit": "points",
+    "xy_z_units": "metres",
+    "grid_unit": "metres",
+    "volume_unit": "m3",
+    "point_cloud_load_seconds": 13.039054800003214,
+    "coordinate_transform": "local_transform = translation(-scene.x_shift,-scene.y_shift) * DOM rasterio transform",
+    "footprint_alignment": "temporary nearest-neighbour shape reconciliation to returned height_map dimensions"
+  },
+  "selection": {
+    "n_available_accepted": 8538,
+    "n_selected": 12,
+    "rule": "sort by existing fused equivalent_diameter_m; deterministic positions across sorted list",
+    "selected_ids": [
+      "stone_006809",
+      "stone_007326",
+      "stone_001114",
+      "stone_002781",
+      "stone_000604",
+      "stone_003525",
+      "stone_007077",
+      "stone_004344",
+      "stone_008883",
+      "stone_007635",
+      "stone_004380",
+      "stone_005149"
+    ]
+  },
+  "summary": {
+    "n_selected": 12,
+    "n_pass": 12,
+    "n_fail": 0,
+    "y_pred": {
+      "n": 12,
+      "min": 0.6769422981029488,
+      "median": 0.6870869347719062,
+      "max": 0.6939138716087555,
+      "mean": 0.6851715937210091
+    },
+    "V_2_5D_m3": {
+      "n": 12,
+      "min": 0.01018166165996547,
+      "median": 0.06424841550341125,
+      "max": 0.3035879163048332,
+      "mean": 0.10451395105628614
+    },
+    "V_pred_m3": {
+      "n": 12,
+      "min": 0.006920903084603061,
+      "median": 0.044205018999047635,
+      "max": 0.20856959818696152,
+      "mean": 0.07171063701494707
+    },
+    "occupied_cells": {
+      "n": 12,
+      "min": 1714.0,
+      "median": 2654.5,
+      "max": 15647.0,
+      "mean": 4188.833333333333
+    },
+    "point_count": {
+      "n": 12,
+      "min": 3335.0,
+      "median": 7635.0,
+      "max": 40768.0,
+      "mean": 11828.916666666666
+    },
+    "feature_finite_failures": 0,
+    "formula_max_abs_difference": 0.0
+  },
+  "limitations": [
+    "No independent single-rock reference volume is available; no accuracy claim is made.",
+    "Pilot uses existing accepted mask-to-point-cloud associations and is not a full-scene evaluation.",
+    "Scene coordinate QC remains provisional pending manual feature residual checks."
+  ]
+}
